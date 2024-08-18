@@ -5,8 +5,11 @@ dealer and factory system management
 # developer info:
 Mohamad omar kattan 
 
-## Getting Started
- frontEnd side dealer app build by flutter frame work
- server side by node.js
- dataBase by Mysql
-Ï
+## Getting Started deale app: 
+
+ # frontEnd side by flutter:
+  
+
+ # server side by node.js
+
+ # dataBase by Mysql

@@ -3,7 +3,8 @@ import 'package:dealer/utilities/logger_controller.dart';
 import 'package:dealer/utilities/respons_controller.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-// not readAll and deleteAll are not supported right now on windows.
+/*this class for save sensitive data in secure storage local device. 
+note :read All and delete All are not supported right now on windows*/
 class SecureStorage {
   final log = LoggerController();
   final _storage = const FlutterSecureStorage();
@@ -11,7 +12,6 @@ class SecureStorage {
       const AndroidOptions(encryptedSharedPreferences: true);
   final _iosOptions =
       const IOSOptions(accessibility: KeychainAccessibility.first_unlock);
-      
 
   Future<ResultController> isProtectedDataAvailable() async {
     try {
@@ -31,17 +31,6 @@ class SecureStorage {
         iOptions: _iosOptions,
         aOptions: _androidOptions,
       );
-
-      // if (Platform.isWindows) {
-      //   return ResultController(
-      //       error: 'Platform is Windows not supported',
-      //       status: 'not supported');
-      // }
-
-      // final result = await readAll();
-      // if (result.error != null) {
-      //   return ResultController(error: result.error, status: 'fail');
-      // }
       return ResultController(data: 'new data has been wrote', status: 'ok');
     } catch (e) {
       log.showLogger(
@@ -89,18 +78,7 @@ class SecureStorage {
           key: key, iOptions: _iosOptions, aOptions: _androidOptions);
 
       // to do show snakbar that del is okay
-
-      if (Platform.isWindows) {
-        return ResultController(
-            error: 'Platform is Windows not supported',
-            status: 'not supported');
-      }
-
-      final result = await readAll();
-      if (result.error != null) {
-        return ResultController(error: result.error, status: 'fail');
-      }
-      return ResultController(data: result.data ?? 'no data', status: 'ok');
+      return ResultController(data: 'item has been delete', status: 'ok');
     } catch (e) {
       log.showLogger(
           'e', 'Unhandled error in deleteOne method in SecureStorage :: $e');
@@ -109,22 +87,16 @@ class SecureStorage {
   }
 
   Future<ResultController> deleteAll() async {
+    if (Platform.isWindows) {
+      return ResultController(
+          error: 'Platform is Windows not supported to delete all item',
+          status: 'not supported');
+    }
     try {
       await _storage.deleteAll(
-        iOptions: _iosOptions,
-        aOptions: _androidOptions,
-      );
+          iOptions: _iosOptions, aOptions: _androidOptions);
       // to do show snakbar that del is okay
-      if (Platform.isWindows) {
-        return ResultController(
-            error: 'Platform is Windows not supported',
-            status: 'not supported');
-      }
-      final result = await readAll();
-      if (result.error != null) {
-        return ResultController(error: result.error, status: 'fail');
-      }
-      return ResultController(data: result.data ?? 'no data', status: 'ok');
+      return ResultController(data: 'data has been delete', status: 'ok');
     } catch (e) {
       log.showLogger(
           'e', 'Unhandled error in deleteAll method in SecureStorage :: $e');
