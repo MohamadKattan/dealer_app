@@ -2,6 +2,5 @@
 
 abstract class SplashEvent {}
 
-class ChangeVal extends SplashEvent {}
-
-class GetUserInfo extends SplashEvent {}
+// event read user data & config if from local or remont.
+class GetDataUserAndConfigEvent extends SplashEvent {}

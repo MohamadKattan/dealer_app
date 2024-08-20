@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:dealer/utilities/logger_controller.dart';
-import 'package:dealer/utilities/respons_controller.dart';
+import 'package:dealer/utilities/dev_helper/logger_controller.dart';
+import 'package:dealer/utilities/results_controller.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /*this class for save sensitive data in secure storage local device. 
@@ -43,9 +43,7 @@ class SecureStorage {
     try {
       String? val = await _storage.read(
           key: key, iOptions: _iosOptions, aOptions: _androidOptions);
-      return ResultController(
-          data: val ?? 'No val match with this key or no value exist yet ...',
-          status: 'ok');
+      return ResultController(data: val, status: 'ok');
     } catch (e) {
       log.showLogger(
           'e', 'Unhandled error in readOneItem method in SecureStorage :: $e');
