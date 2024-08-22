@@ -1,17 +1,19 @@
 import 'package:logger/logger.dart';
 
+enum LogLevel { error, info, warning }
+
 class LoggerController {
   final logger = Logger(printer: PrettyPrinter());
 
-  void showLogger(String key, String msg) {
-    switch (key) {
-      case 'e':
+  void showLogger(LogLevel level, String msg) {
+    switch (level) {
+      case LogLevel.error:
         logger.e("Error log", error: msg);
         break;
-      case 'i':
+      case LogLevel.info:
         logger.i(msg);
         break;
-      case 'w':
+      case LogLevel.warning:
         logger.w(msg);
         break;
       default:

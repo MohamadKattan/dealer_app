@@ -11,7 +11,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   }
   final logger = LoggerController();
   final localeSecureStorag = SecureStorage();
-  
+
   _getDataUserAndConfig(
       GetDataUserAndConfigEvent event, Emitter<SplashState> emit) async {
     try {
@@ -19,18 +19,19 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       await Future.delayed(const Duration(seconds: 2));
       final result = await localeSecureStorag.readOne('user');
       if (result.error != null) {
-        logger.showLogger('e', result.error ?? 'error');
+        logger.showLogger(LogLevel.error, result.error ?? 'error');
       }
       if (result.data != null) {
         logger.showLogger(
-            'i', 'user in local ${result.data} nav to home screen');
+            LogLevel.info, 'user in local ${result.data} nav to home screen');
       }
       if (result.data == null) {
-        logger.showLogger('i', 'No user in local push to login screen');
+        logger.showLogger(
+            LogLevel.info, 'No user in local push to login screen');
       }
       emit(GetDataAndConfigState(newTxet: 'done'));
     } catch (e) {
-      logger.showLogger('e', e.toString());
+      logger.showLogger(LogLevel.error, e.toString());
       emit(ErrorGetDate('error _getDataUserAndConfig :: ${e.toString()}'));
     }
   }

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:dealer/utilities/dev_helper/logger_controller.dart';
-import 'package:dealer/utilities/results_controller.dart';
+import 'package:dealer/utilities/dyanmic_data_res/results_controller.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /*this class for save sensitive data in secure storage local device. 
@@ -18,7 +18,8 @@ class SecureStorage {
       final result = await _storage.isCupertinoProtectedDataAvailable();
       return ResultController(data: result, status: 'ok');
     } catch (e) {
-      log.showLogger('e', 'Error checking protected data availability: $e');
+      log.showLogger(
+          LogLevel.error, 'Error checking protected data availability: $e');
       return ResultController(error: e.toString(), status: 'fail');
     }
   }
@@ -33,8 +34,8 @@ class SecureStorage {
       );
       return ResultController(data: 'new data has been wrote', status: 'ok');
     } catch (e) {
-      log.showLogger(
-          'e', 'Unhandled error in addNewItem method in SecureStorage :: $e');
+      log.showLogger(LogLevel.error,
+          'Unhandled error in addNewItem method in SecureStorage :: $e');
       return ResultController(error: e.toString(), status: 'fail');
     }
   }
@@ -45,8 +46,8 @@ class SecureStorage {
           key: key, iOptions: _iosOptions, aOptions: _androidOptions);
       return ResultController(data: val, status: 'ok');
     } catch (e) {
-      log.showLogger(
-          'e', 'Unhandled error in readOneItem method in SecureStorage :: $e');
+      log.showLogger(LogLevel.error,
+          'Unhandled error in readOneItem method in SecureStorage :: $e');
       return ResultController(error: e.toString(), status: 'fail');
     }
   }
@@ -63,8 +64,8 @@ class SecureStorage {
       );
       return ResultController(data: all, status: 'ok');
     } catch (e) {
-      log.showLogger(
-          'e', 'Unhandled error in readAll method in SecureStorage :: $e');
+      log.showLogger(LogLevel.error,
+          'Unhandled error in readAll method in SecureStorage :: $e');
 
       return ResultController(error: e.toString(), status: 'fail');
     }
@@ -78,8 +79,8 @@ class SecureStorage {
       // to do show snakbar that del is okay
       return ResultController(data: 'item has been delete', status: 'ok');
     } catch (e) {
-      log.showLogger(
-          'e', 'Unhandled error in deleteOne method in SecureStorage :: $e');
+      log.showLogger(LogLevel.error,
+          'Unhandled error in deleteOne method in SecureStorage :: $e');
       return ResultController(error: e.toString(), status: 'fail');
     }
   }
@@ -96,8 +97,8 @@ class SecureStorage {
       // to do show snakbar that del is okay
       return ResultController(data: 'data has been delete', status: 'ok');
     } catch (e) {
-      log.showLogger(
-          'e', 'Unhandled error in deleteAll method in SecureStorage :: $e');
+      log.showLogger(LogLevel.error,
+          'Unhandled error in deleteAll method in SecureStorage :: $e');
       return ResultController(error: e.toString(), status: 'fail');
     }
   }

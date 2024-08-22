@@ -1,14 +1,16 @@
 import 'dart:convert';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:dealer/components/app_indicators.dart';
 import 'package:dealer/components/app_text.dart';
-import 'package:dealer/utilities/stayle_app/stayle_config.dart';
+import 'package:dealer/utilities/style_app/style_config.dart';
 import 'package:dealer/views/splash/bloc/splash_bloc.dart';
 import 'package:dealer/views/splash/bloc/splash_event.dart';
 import 'package:dealer/views/splash/bloc/splash_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+@RoutePage()
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
@@ -16,7 +18,7 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     String txt = '';
     return Scaffold(
-      backgroundColor: bgroundColor,
+      backgroundColor: DefaultValuse.bgroundColor,
       body: BlocBuilder<SplashBloc, SplashState>(
         builder: (context, state) {
           if (state is Inite) {
@@ -45,12 +47,11 @@ class SplashScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Card(child: Image.memory(base64Decode(defaultSplashImg))),
-        SizedBox(
-            width: 100, child: AppIndicators().loudingLinearProgressIndicator),
+        Card(child: Image.memory(base64Decode(DefaultValuse.defaultSplashImg))),
+        const SizedBox(width: 100, child: AppIndicators.loadingLinearIndicator),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: AppText().normalTxet(txt),
+          child: AppText.normalTxet(txt),
         )
       ],
     ));
