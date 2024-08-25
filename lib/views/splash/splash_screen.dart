@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:auto_route/auto_route.dart';
 import 'package:dealer/components/app_indicators.dart';
 import 'package:dealer/components/app_text.dart';
+import 'package:dealer/router/router_app.gr.dart';
 import 'package:dealer/utilities/style_app/style_config.dart';
 import 'package:dealer/views/splash/bloc/splash_bloc.dart';
 import 'package:dealer/views/splash/bloc/splash_event.dart';
@@ -17,8 +18,8 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String txt = '';
+    StackRouter router = context.router;
     return Scaffold(
-      backgroundColor: DefaultValuse.bgroundColor,
       body: BlocBuilder<SplashBloc, SplashState>(
         builder: (context, state) {
           if (state is Inite) {
@@ -29,6 +30,9 @@ class SplashScreen extends StatelessWidget {
           }
           if (state is GetDataAndConfigState) {
             txt = state.newTxet ?? 'okay';
+            if (state.user == null) {
+              router.push(const LoginRoute());
+            }
             return const SizedBox();
           }
           if (state is ErrorGetDate) {

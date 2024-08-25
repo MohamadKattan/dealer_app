@@ -27,7 +27,8 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       }
       if (result.data == null) {
         logger.showLogger(
-            LogLevel.info, 'No user in local push to login screen');
+            LogLevel.info, 'No user in local push ==> to login screen');
+        emit(GetDataAndConfigState(user: null));
       }
       emit(GetDataAndConfigState(newTxet: 'done'));
     } catch (e) {
