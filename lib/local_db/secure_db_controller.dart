@@ -16,11 +16,11 @@ class SecureStorage {
   Future<ResultController> isProtectedDataAvailable() async {
     try {
       final result = await _storage.isCupertinoProtectedDataAvailable();
-      return ResultController(data: result, status: 'ok');
+      return ResultController(data: result, status: ResultsLevel.success);
     } catch (e) {
       log.showLogger(
           LogLevel.error, 'Error checking protected data availability: $e');
-      return ResultController(error: e.toString(), status: 'fail');
+      return ResultController(error: e.toString(), status: ResultsLevel.fail);
     }
   }
 
@@ -32,11 +32,12 @@ class SecureStorage {
         iOptions: _iosOptions,
         aOptions: _androidOptions,
       );
-      return ResultController(data: 'new data has been wrote', status: 'ok');
+      return ResultController(
+          data: 'new data has been wrote', status: ResultsLevel.success);
     } catch (e) {
       log.showLogger(LogLevel.error,
           'Unhandled error in addNewItem method in SecureStorage :: $e');
-      return ResultController(error: e.toString(), status: 'fail');
+      return ResultController(error: e.toString(), status: ResultsLevel.fail);
     }
   }
 
@@ -44,30 +45,31 @@ class SecureStorage {
     try {
       String? val = await _storage.read(
           key: key, iOptions: _iosOptions, aOptions: _androidOptions);
-      return ResultController(data: val, status: 'ok');
+      return ResultController(data: val, status: ResultsLevel.success);
     } catch (e) {
       log.showLogger(LogLevel.error,
           'Unhandled error in readOneItem method in SecureStorage :: $e');
-      return ResultController(error: e.toString(), status: 'fail');
+      return ResultController(error: e.toString(), status: ResultsLevel.fail);
     }
   }
 
   Future<ResultController> readAll() async {
     if (Platform.isWindows) {
       return ResultController(
-          error: 'Platform is Windows not supported', status: 'not supported');
+          error: 'Platform is Windows not supported',
+          status: ResultsLevel.notSupported);
     }
     try {
       final all = await _storage.readAll(
         iOptions: _iosOptions,
         aOptions: _androidOptions,
       );
-      return ResultController(data: all, status: 'ok');
+      return ResultController(data: all, status: ResultsLevel.success);
     } catch (e) {
       log.showLogger(LogLevel.error,
           'Unhandled error in readAll method in SecureStorage :: $e');
 
-      return ResultController(error: e.toString(), status: 'fail');
+      return ResultController(error: e.toString(), status: ResultsLevel.fail);
     }
   }
 
@@ -77,11 +79,12 @@ class SecureStorage {
           key: key, iOptions: _iosOptions, aOptions: _androidOptions);
 
       // to do show snakbar that del is okay
-      return ResultController(data: 'item has been delete', status: 'ok');
+      return ResultController(
+          data: 'item has been delete', status: ResultsLevel.success);
     } catch (e) {
       log.showLogger(LogLevel.error,
           'Unhandled error in deleteOne method in SecureStorage :: $e');
-      return ResultController(error: e.toString(), status: 'fail');
+      return ResultController(error: e.toString(), status: ResultsLevel.fail);
     }
   }
 
@@ -89,17 +92,18 @@ class SecureStorage {
     if (Platform.isWindows) {
       return ResultController(
           error: 'Platform is Windows not supported to delete all item',
-          status: 'not supported');
+          status: ResultsLevel.notSupported);
     }
     try {
       await _storage.deleteAll(
           iOptions: _iosOptions, aOptions: _androidOptions);
       // to do show snakbar that del is okay
-      return ResultController(data: 'data has been delete', status: 'ok');
+      return ResultController(
+          data: 'data has been delete', status: ResultsLevel.success);
     } catch (e) {
       log.showLogger(LogLevel.error,
           'Unhandled error in deleteAll method in SecureStorage :: $e');
-      return ResultController(error: e.toString(), status: 'fail');
+      return ResultController(error: e.toString(), status: ResultsLevel.fail);
     }
   }
 }
