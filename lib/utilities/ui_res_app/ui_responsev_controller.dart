@@ -12,6 +12,14 @@ enum ScreenSize {
 }
 
 class UiResponsive {
+  static double globalMedia({required BuildContext context, bool? isHeight}) {
+    final mediaQuery = MediaQuery.of(context).size;
+    final width = mediaQuery.width;
+    final height = mediaQuery.height;
+    if (isHeight ?? false) return height;
+    return width;
+  }
+
   static void listingToSizeScreen(ScreenSize width) {
     switch (width) {
       case ScreenSize.isMobile:
@@ -30,24 +38,15 @@ class UiResponsive {
   static Widget myUiBuilder(BuildContext _, Widget child) {
     return LayoutBuilder(builder: (_, box) {
       final width = box.maxWidth.toInt();
-    
-      if (width <= ScreenSize.isMobile.width) {
-    
-      }
+
+      if (width <= ScreenSize.isMobile.width) {}
       if (width <= ScreenSize.isIpad.width &&
-          width > ScreenSize.isMobile.width) {
-     
-      }
+          width > ScreenSize.isMobile.width) {}
       if (width <= ScreenSize.isLapSmall.width &&
-          width > ScreenSize.isIpad.width) {
-    
-      }
+          width > ScreenSize.isIpad.width) {}
       if (width <= ScreenSize.isDesktop.width &&
-          width > ScreenSize.isLapSmall.width) {
-      
-      }
-      if (width > ScreenSize.isDesktop.width) {
-      }
+          width > ScreenSize.isLapSmall.width) {}
+      if (width > ScreenSize.isDesktop.width) {}
       return child;
     });
   }

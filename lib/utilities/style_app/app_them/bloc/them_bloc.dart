@@ -30,7 +30,7 @@ class ThemeBloc extends Cubit<ThemeData> {
 
       if (res.data == null || res.data.runtimeType != String) {
         AppInjector.newLogger
-            .showLogger(LogLevel.error, 'retrived data null or  error type');
+            .showLogger(LogLevel.warning, 'retrived data null or  error type');
         return;
       }
       String result = res.data;

@@ -1,4 +1,5 @@
 {
-    "helloWorld": "¡Hola Mundo!",
+    "titleMain": "Bayi Sistem Yönetimi",
+    "loudingUserInfo":"Kullanıcı bilgileri yükleniyor",
     "@@locale": "tr"
 }

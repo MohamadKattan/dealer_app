@@ -1,4 +1,4 @@
-# dealer
+# What about dealer 
 - dealer and factory system management full dynamic app that allows you to do all kind of edit on app setting or connect with db dynamically and edit.
   
 - this application made for factory and dealer controller all their business buy,sale and create there goods with calc how much cost making and sale price and calc there earn
@@ -11,8 +11,11 @@
 - phone : +79288562219 - +905384643348
 - email : katttansoftware@gmail.com
 
+# welcome 
+  Hi. before get started make your coffee than happy coding. for any info or help while you edit or update the project feel free to ask.
+
 ## Getting Started deale app: 
-    Hi. before get started make your coffee than happy coding. for any info or help while you edit or update the project feel free to ask.
+  https://docs.flutter.dev/get-started/
 
  # frontEnd side by flutter:
  what you needed to know:
@@ -23,9 +26,7 @@
  - local database for large and normal data => hive
  - secure local db for save imporatnt data  => flutter_secure_storage
  - router => auto_router
-  ======================
-   - all keys that you need in will be in enm classes with there own class to avoid any typo and easy to over write 
-   - 
+ - all keys that you need in will be in enm classes with there own class to avoid any typo and easy to   over write 
  # backEnd by node.js
   MVC PATTREN
   express

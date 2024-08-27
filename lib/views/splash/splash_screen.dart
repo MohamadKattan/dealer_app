@@ -5,7 +5,8 @@ import 'package:dealer/components/app_indicators.dart';
 import 'package:dealer/components/app_text.dart';
 import 'package:dealer/router/router_app.gr.dart';
 import 'package:dealer/utilities/style_app/app_them/bloc/them_bloc.dart';
-import 'package:dealer/utilities/style_app/style_config.dart';
+import 'package:dealer/utilities/style_app/config/style_config.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:dealer/views/splash/bloc/splash_bloc.dart';
 import 'package:dealer/views/splash/bloc/splash_event.dart';
@@ -29,7 +30,7 @@ class SplashScreen extends StatelessWidget {
             context.read<SplashBloc>().add(GetDataUserAndConfigEvent());
           }
           if (state is Louding) {
-            txt = state.txt ?? 'louding';
+            txt = AppLocalizations.of(context)!.loudingUserInfo;
           }
           if (state is GetDataAndConfigState) {
             txt = state.newTxet ?? 'okay';
@@ -49,33 +50,27 @@ class SplashScreen extends StatelessWidget {
   }
 
   Widget _body(String txt, BuildContext context) {
-    return Center(
+    return SafeArea(
+      child: Center(
+          child: SingleChildScrollView(
         child: Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Builder(
-          builder: (_) {
-            double minHeight = MediaQuery.of(context).size.height;
-            return minHeight <= 600
-                ? const SizedBox()
-                : Card(
-                    child: Image.memory(
-                      base64Decode(DefaultValuse.defaultSplashImg),
-                    ),
-                  );
-          },
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Card(
+              child: Image.memory(
+                base64Decode(DefaultValuse.defaultSplashImg),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: SizedBox(
+                  width: 200, child: AppIndicators.loadingLinearIndicator),
+            ),
+            AppText.normalTxet(txt)
+          ],
         ),
-        const Padding(
-          padding: EdgeInsets.all(8.0),
-          child:
-              SizedBox(width: 200, child: AppIndicators.loadingLinearIndicator),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: AppText.normalTxet(txt),
-        )
-      ],
-    ));
+      )),
+    );
   }
 }

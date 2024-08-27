@@ -1,4 +1,5 @@
 {
-    "helloWorld": "¡Hola Mundo!",
+    "titleMain": "إدارة نظام التاجر",
+    "loudingUserInfo":"تحميل معلومات المستخدم",
     "@@locale": "ar"
 }
