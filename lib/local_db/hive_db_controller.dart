@@ -1,7 +1,7 @@
 // this class ineclode hive locale db
 import 'package:dealer/utilities/dev_helper/app_injector.dart';
 import 'package:dealer/utilities/dev_helper/logger_controller.dart';
-import 'package:dealer/utilities/dyanmic_data_res/results_controller.dart';
+import 'package:dealer/utilities/dyanmic_data_result/results_controller.dart';
 import 'package:hive/hive.dart';
 
 enum BoxesLevel {
@@ -34,7 +34,7 @@ class LocalStorage {
       _boxCollectionCache = box;
       return ResultController(data: box, status: ResultsLevel.success);
     } catch (e) {
-      AppInjector.newLogger
+      AppInjector.appLogger
           .showLogger(LogLevel.error, 'Failed to open database: $e');
       return ResultController(
           error: 'Failed to open database', status: ResultsLevel.fail);
@@ -45,19 +45,19 @@ class LocalStorage {
     try {
       final collection = await _openDatabaseCollection();
       if (collection.status == ResultsLevel.fail) {
-        AppInjector.newLogger
+        AppInjector.appLogger
             .showLogger(LogLevel.error, 'Failed to open local database.');
         return ResultController(
             error: 'Failed to open local database.', status: ResultsLevel.fail);
       }
       if (collection.data == null) {
-        AppInjector.newLogger
+        AppInjector.appLogger
             .showLogger(LogLevel.error, 'Retrieved data is null.');
         return ResultController(
             error: 'Retrieved data is null.', status: ResultsLevel.fail);
       }
       if (!nameBoxes.contains(boxName)) {
-        AppInjector.newLogger
+        AppInjector.appLogger
             .showLogger(LogLevel.error, 'Invalid box name: $boxName');
         return ResultController(
             error: 'Invalid box name', status: ResultsLevel.fail);
@@ -66,7 +66,7 @@ class LocalStorage {
       final resBox = await newOpenBox.openBox(boxName);
       return ResultController(data: resBox, status: ResultsLevel.success);
     } catch (e) {
-      AppInjector.newLogger.showLogger(LogLevel.error, e.toString());
+      AppInjector.appLogger.showLogger(LogLevel.error, e.toString());
       return ResultController(
           error: 'error to start open box', status: ResultsLevel.fail);
     }
@@ -81,7 +81,7 @@ class LocalStorage {
       return ResultController(
           data: 'success put data', status: ResultsLevel.success);
     } catch (e) {
-      AppInjector.newLogger.showLogger(LogLevel.error, e.toString());
+      AppInjector.appLogger.showLogger(LogLevel.error, e.toString());
       return ResultController(error: e.toString(), status: ResultsLevel.fail);
     }
   }
@@ -93,7 +93,7 @@ class LocalStorage {
       final result = await box.data!.get(key);
       return ResultController(data: result, status: ResultsLevel.success);
     } catch (e) {
-      AppInjector.newLogger.showLogger(LogLevel.error, e.toString());
+      AppInjector.appLogger.showLogger(LogLevel.error, e.toString());
       return ResultController(
           error: 'error to get data from locale', status: ResultsLevel.fail);
     }
@@ -107,7 +107,7 @@ class LocalStorage {
       final result = await box.data!.getAll(keys);
       return ResultController(data: result, status: ResultsLevel.success);
     } catch (e) {
-      AppInjector.newLogger.showLogger(LogLevel.error, e.toString());
+      AppInjector.appLogger.showLogger(LogLevel.error, e.toString());
       return ResultController(
           error: 'error to get all  data from locale',
           status: ResultsLevel.fail);
@@ -122,7 +122,7 @@ class LocalStorage {
       return ResultController(
           data: 'item has been delted', status: ResultsLevel.success);
     } catch (e) {
-      AppInjector.newLogger.showLogger(LogLevel.error, e.toString());
+      AppInjector.appLogger.showLogger(LogLevel.error, e.toString());
       return ResultController(
           error: 'error to delete one  item from locale box $boxName',
           status: ResultsLevel.fail);
@@ -138,7 +138,7 @@ class LocalStorage {
       return ResultController(
           data: 'items has been delted', status: ResultsLevel.success);
     } catch (e) {
-      AppInjector.newLogger.showLogger(LogLevel.error, e.toString());
+      AppInjector.appLogger.showLogger(LogLevel.error, e.toString());
       return ResultController(
           error: 'error to  all delete items from locale box $boxName',
           status: ResultsLevel.fail);
@@ -153,7 +153,7 @@ class LocalStorage {
       return ResultController(
           data: 'cleared box $boxName', status: ResultsLevel.success);
     } catch (e) {
-      AppInjector.newLogger.showLogger(LogLevel.error, e.toString());
+      AppInjector.appLogger.showLogger(LogLevel.error, e.toString());
       return ResultController(
           error: 'error to clear from locale box $boxName',
           status: ResultsLevel.fail);

@@ -1,7 +1,7 @@
 import 'package:dealer/local_db/hive_db_controller.dart';
 import 'package:dealer/utilities/dev_helper/app_injector.dart';
 import 'package:dealer/utilities/dev_helper/logger_controller.dart';
-import 'package:dealer/utilities/dyanmic_data_res/results_controller.dart';
+import 'package:dealer/utilities/dyanmic_data_result/results_controller.dart';
 import 'package:dealer/utilities/style_app/app_them/app_them.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,12 +24,12 @@ class ThemeBloc extends Cubit<ThemeData> {
       final res = await AppInjector.localStorage.getOneItem(
           BoxesLevel.boxSettings.boxName, HiveKeyslevel.brightness.keyName);
       if (res.status == ResultsLevel.fail) {
-        AppInjector.newLogger.showLogger(LogLevel.error, res.error ?? 'error');
+        AppInjector.appLogger.showLogger(LogLevel.error, res.error ?? 'error');
         return;
       }
 
       if (res.data == null || res.data.runtimeType != String) {
-        AppInjector.newLogger
+        AppInjector.appLogger
             .showLogger(LogLevel.warning, 'retrived data null or  error type');
         return;
       }
@@ -40,7 +40,7 @@ class ThemeBloc extends Cubit<ThemeData> {
         emit(AppTheme.lightTheme);
       }
     } catch (e) {
-      AppInjector.newLogger.showLogger(LogLevel.error, e.toString());
+      AppInjector.appLogger.showLogger(LogLevel.error, e.toString());
       
       return;
     }
@@ -52,6 +52,6 @@ class ThemeBloc extends Cubit<ThemeData> {
         : AppTheme.darkTheme);
     await AppInjector.localStorage.putData(BoxesLevel.boxSettings.boxName,
         HiveKeyslevel.brightness.keyName, state.brightness.name);
-    AppInjector.newLogger.showLogger(LogLevel.info, state.brightness.name);
+    AppInjector.appLogger.showLogger(LogLevel.info, state.brightness.name);
   }
 }

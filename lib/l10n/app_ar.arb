@@ -1,5 +1,10 @@
 {
     "titleMain": "إدارة نظام التاجر",
-    "loudingUserInfo":"تحميل معلومات المستخدم",
+    "loudingUserInfo": "تحميل معلومات المستخدم",
+    "lableName": "اسم المستخدم",
+    "hintName": "اكتب اسمك",
+    "lablePass": "Password",
+    "hintPass": "اكتب كلمة المرور الخاصة بك",
+    "btnLogin": "تسجيل الدخول",
     "@@locale": "ar"
 }

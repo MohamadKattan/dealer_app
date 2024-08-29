@@ -19,7 +19,7 @@ class AppTheme {
   );
 
   static final ThemeData darkTheme = ThemeData(
-    scaffoldBackgroundColor: const Color.fromARGB(255, 0, 0, 0),
+    scaffoldBackgroundColor: const Color.fromARGB(255, 62, 60, 60),
     colorScheme: const ColorScheme.dark(
       primary: Color.fromARGB(255, 255, 158, 113),
       onPrimary: Color.fromARGB(255, 144, 143, 143),

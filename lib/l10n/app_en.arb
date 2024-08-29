@@ -1,5 +1,10 @@
 {
     "titleMain": "Dealer System Management",
-    "loudingUserInfo":"Louding user info",
+    "loudingUserInfo": "Louding user info",
+    "lableName": "UserName",
+    "hintName": "Type your name",
+    "lablePass": "PassWord",
+    "hintPass": "Type your passWord",
+    "btnLogin": "Login",
     "@@locale": "en"
 }

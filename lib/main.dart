@@ -1,4 +1,5 @@
 import 'package:dealer/router/router_app.dart';
+import 'package:dealer/views/login/bloc/login_bloc.dart';
 import 'package:dealer/views/splash/bloc/splash_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,7 +20,8 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<SplashBloc>(create: (_) => SplashBloc()),
-        BlocProvider<ThemeBloc>(create: (_) => ThemeBloc())
+        BlocProvider<ThemeBloc>(create: (_) => ThemeBloc()),
+        BlocProvider<LoginBloc>(create: (_) => LoginBloc())
       ],
       child: BlocBuilder<ThemeBloc, ThemeData>(builder: (_, theme) {
         return MaterialApp.router(

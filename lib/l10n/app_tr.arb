@@ -1,5 +1,10 @@
 {
     "titleMain": "Bayi Sistem Yönetimi",
-    "loudingUserInfo":"Kullanıcı bilgileri yükleniyor",
+    "loudingUserInfo": "Kullanıcı bilgileri yükleniyor",
+    "lableName": "Kullanıcı adı",
+    "hintName": "Adınızı yazın",
+    "lablePass": "Şifre",
+    "hintPass": "Şifrenizi yazın",
+    "btnLogin": "Giriş yap",
     "@@locale": "tr"
 }

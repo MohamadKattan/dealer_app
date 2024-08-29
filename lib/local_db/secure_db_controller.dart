@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:dealer/utilities/dev_helper/logger_controller.dart';
-import 'package:dealer/utilities/dyanmic_data_res/results_controller.dart';
+import 'package:dealer/utilities/dyanmic_data_result/results_controller.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /*this class for save sensitive data in secure storage local device. 

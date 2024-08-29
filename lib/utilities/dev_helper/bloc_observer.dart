@@ -12,7 +12,7 @@ class AppBlocObserver extends BlocObserver {
   void onChange(BlocBase<dynamic> bloc, Change<dynamic> change) {
     super.onChange(bloc, change);
     if (bloc is Cubit) {
-      AppInjector.newLogger.showLogger(LogLevel.info, change.toString());
+      AppInjector.appLogger.showLogger(LogLevel.info, change.toString());
     }
   }
 
@@ -22,6 +22,6 @@ class AppBlocObserver extends BlocObserver {
     Transition<dynamic, dynamic> transition,
   ) {
     super.onTransition(bloc, transition);
-    AppInjector.newLogger.showLogger(LogLevel.info, transition.toString());
+    AppInjector.appLogger.showLogger(LogLevel.info, transition.toString());
   }
 }

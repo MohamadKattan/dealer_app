@@ -5,8 +5,10 @@ import 'package:dealer/components/app_text_field.dart';
 import 'package:dealer/utilities/style_app/app_them/bloc/them_bloc.dart';
 import 'package:dealer/utilities/style_app/config/style_config.dart';
 import 'package:dealer/utilities/ui_res_app/ui_responsev_controller.dart';
+import 'package:dealer/views/login/bloc/login_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 @RoutePage()
 class LoginScreen extends StatefulWidget {
@@ -34,45 +36,61 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _body(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
+    return BlocBuilder<LoginBloc, int>(builder: (_, state) {
+      return SafeArea(
+        child: Scaffold(
           body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              const SizedBox(height: 120),
-              AppImage.imageByte(
-                  height: 120, width: 120, img: DefaultValuse.defaultSplashImg),
-              Builder(builder: (context) {
-                final newWidth = UiResponsive.globalMedia(context: context);
-                return SizedBox(
-                  width: newWidth >= ScreenSize.isIpad.width ? 400 : null,
-                  child: Column(
-                    children: [
-                      AppTextField.customField(
-                          controller: userName,
-                          labelText: 'User Name',
-                          hintText: 'type your name',
-                          icons: Icons.person),
-                      AppTextField.customField(
-                          controller: passWord,
-                          labelText: 'Pass Word',
-                          hintText: 'type your pass word',
-                          obscureText: true,
-                          icons: Icons.password),
-                      const SizedBox(height: 20),
-                      AppBtn.eleBtn(
-                          txt: 'click',
-                          onPressed: () =>
-                              context.read<ThemeBloc>().toggleTheme())
-                    ],
-                  ),
-                );
-              })
-            ],
+            child: Center(
+              child: Column(
+                children: [
+                  const SizedBox(height: 120),
+                  AppImage.imageByte(
+                      height: 120,
+                      width: 120,
+                      img: DefaultValuse.defaultSplashImg),
+                  Builder(
+                    builder: (context) {
+                      final newWidth =
+                          UiResponsive.globalMedia(context: context);
+                      return SizedBox(
+                        width: newWidth >= ScreenSize.isIpad.width ? 400 : null,
+                        child: Column(
+                          children: [
+                            AppTextField.customField(
+                                controller: userName,
+                                labelText:
+                                    AppLocalizations.of(context)!.lableName,
+                                hintText:
+                                    AppLocalizations.of(context)!.hintName,
+                                icons: Icons.person),
+                            AppTextField.customField(
+                                controller: passWord,
+                                labelText:
+                                    AppLocalizations.of(context)!.lablePass,
+                                hintText:
+                                    AppLocalizations.of(context)!.hintName,
+                                obscureText: true,
+                                icons: Icons.password),
+                            const SizedBox(height: 20),
+                            state == 0
+                                ? AppBtn.eleBtn(
+                                    txt: AppLocalizations.of(context)!.btnLogin,
+                                    onPressed: () {
+                                      context.read<LoginBloc>().newLogin();
+                                      context.read<ThemeBloc>().toggleTheme();
+                                    })
+                                : const SizedBox()
+                          ],
+                        ),
+                      );
+                    },
+                  )
+                ],
+              ),
+            ),
           ),
         ),
-      )),
-    );
+      );
+    });
   }
 }
