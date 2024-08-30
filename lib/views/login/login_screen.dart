@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:dealer/components/app_btn.dart';
 import 'package:dealer/components/app_image.dart';
 import 'package:dealer/components/app_text_field.dart';
-import 'package:dealer/utilities/style_app/app_them/bloc/them_bloc.dart';
 import 'package:dealer/utilities/style_app/config/style_config.dart';
 import 'package:dealer/utilities/ui_res_app/ui_responsev_controller.dart';
 import 'package:dealer/views/login/bloc/login_bloc.dart';
@@ -76,8 +75,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ? AppBtn.eleBtn(
                                     txt: AppLocalizations.of(context)!.btnLogin,
                                     onPressed: () {
-                                      context.read<LoginBloc>().newLogin();
-                                      context.read<ThemeBloc>().toggleTheme();
+                                      final name = userName.text;
+                                      final pass = passWord.text.trim();
+                                      context
+                                          .read<LoginBloc>()
+                                          .newLogin(name, pass);
                                     })
                                 : const SizedBox()
                           ],
