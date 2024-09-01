@@ -23,16 +23,18 @@ class MyApp extends StatelessWidget {
         BlocProvider<ThemeBloc>(create: (_) => ThemeBloc()),
         BlocProvider<LoginBloc>(create: (_) => LoginBloc())
       ],
-      child: BlocBuilder<ThemeBloc, ThemeData>(builder: (_, theme) {
-        return MaterialApp.router(
-          title: 'Dealer System Mangment',
-          debugShowCheckedModeBanner: false,
-          theme: theme,
-          routerConfig: _appRouter.config(),
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-        );
-      }),
+      child: BlocBuilder<ThemeBloc, ThemeData>(
+        builder: (_, theme) {
+          return MaterialApp.router(
+            title: 'Dealer System Mangment',
+            debugShowCheckedModeBanner: false,
+            theme: theme,
+            routerConfig: _appRouter.config(),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+          );
+        },
+      ),
     );
   }
 }

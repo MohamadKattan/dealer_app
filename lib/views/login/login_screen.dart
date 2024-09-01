@@ -36,6 +36,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _body(BuildContext context) {
     return BlocBuilder<LoginBloc, int>(builder: (_, state) {
+      if (state == 2) {
+        print('ffff');
+      }
       return SafeArea(
         child: Scaffold(
           body: SingleChildScrollView(
@@ -80,13 +83,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                       context
                                           .read<LoginBloc>()
                                           .newLogin(name, pass);
-                                    })
+                                    },
+                                  )
                                 : const SizedBox()
                           ],
                         ),
                       );
                     },
-                  )
+                  ),
                 ],
               ),
             ),

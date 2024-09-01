@@ -1,5 +1,6 @@
 // Define Bloc
 import 'package:bloc/bloc.dart';
+import 'package:dealer/local_db/secure_db_controller.dart';
 import 'package:dealer/utilities/dev_helper/app_injector.dart';
 import 'package:dealer/utilities/dev_helper/logger_controller.dart';
 import 'package:dealer/views/splash/bloc/splash_event.dart';
@@ -16,7 +17,8 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     try {
       emit(Louding(txt: 'Loading user info'));
       await Future.delayed(const Duration(seconds: 2));
-      final result = await AppInjector.localeSecureStorag.readOne('user');
+      final result = await AppInjector.localeSecureStorag
+          .readOne(KeySecureStorage.user.keySecure);
       if (result.error != null) {
         logger.showLogger(LogLevel.error, result.error ?? 'error');
       }

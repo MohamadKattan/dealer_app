@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dealer/local_db/secure_db_controller.dart';
 import 'package:dealer/models/user_model.dart';
 import 'package:dealer/utilities/dev_helper/app_injector.dart';
 import 'package:dealer/utilities/dev_helper/logger_controller.dart';
@@ -19,8 +20,6 @@ class LoginBloc extends Cubit<int> {
 
   Future<void> newLogin(String name, String passWord) async {
     emit(1);
-    await Future.delayed(const Duration(seconds: 3));
-    emit(0);
     try {
       user = User(userName: name, passWord: passWord);
       final result = await AppInjector.httpSrv
@@ -28,13 +27,24 @@ class LoginBloc extends Cubit<int> {
       if (result.status == ResultsLevel.fail) {
         // display some thing to user
         AppInjector.appLogger.showLogger(LogLevel.warning, '${result.data}');
+        emit(0);
       } else {
-        final data = jsonDecode(result.data) as Map<String, dynamic>;
-        user = User.fromMap(data['data']);
-        AppInjector.appLogger.showLogger(LogLevel.info, '${result.data}');
+        final map = jsonDecode(result.data) as Map<String, dynamic>;
+        user = User.fromMap(map['data']);
+        String token = map['token'];
+        String convertUser = jsonEncode(
+            {'name': user.userName, 'per': user.per, 'id': user.userId});
+        await AppInjector.localeSecureStorag
+            .writeNewItem(KeySecureStorage.user.keySecure, convertUser);
+        final save = await AppInjector.localeSecureStorag
+            .writeNewItem(KeySecureStorage.token.keySecure, token);
+        AppInjector.appLogger.showLogger(LogLevel.info, save.status.toString());
+        emit(2);
       }
     } catch (e) {
-      AppInjector.appLogger.showLogger(LogLevel.error, '*** ${e.toString()}');
+      emit(0);
+      AppInjector.appLogger
+          .showLogger(LogLevel.error, '*** ${e.toString()}***');
     }
   }
 

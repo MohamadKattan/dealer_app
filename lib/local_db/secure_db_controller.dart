@@ -5,6 +5,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /*this class for save sensitive data in secure storage local device. 
 note :read All and delete All are not supported right now on windows*/
+enum KeySecureStorage {
+  token('token'),
+  user('user');
+
+  const KeySecureStorage(this.keySecure);
+  final String keySecure;
+}
+
 class SecureStorage {
   final log = LoggerController();
   final _storage = const FlutterSecureStorage();
