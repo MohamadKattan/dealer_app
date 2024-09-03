@@ -6,5 +6,8 @@
     "lablePass": "Şifre",
     "hintPass": "Şifrenizi yazın",
     "btnLogin": "Giriş yap",
+    "titleErrorLogin":"Giriş hatası",
+    "contentErrorLogin":"Bir sorun oluştu. Bilgilerinizi kontrol edip tekrar deneyin.",
+    "okBtn":"Tamam",
     "@@locale": "tr"
 }

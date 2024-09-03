@@ -22,29 +22,33 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     String txt = '';
     StackRouter router = context.router;
-    return Scaffold(
-      body: BlocBuilder<SplashBloc, SplashState>(
-        builder: (context, state) {
-          if (state is Inite) {
-            context.read<ThemeBloc>().getTheme();
-            context.read<SplashBloc>().add(GetDataUserAndConfigEvent());
-          }
-          if (state is Louding) {
-            txt = AppLocalizations.of(context)!.loudingUserInfo;
-          }
-          if (state is GetDataAndConfigState) {
-            txt = state.newTxet ?? 'okay';
-            if (state.user == null) {
-              router.push(const LoginRoute());
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: BlocBuilder<SplashBloc, SplashState>(
+          builder: (context, state) {
+            if (state is Inite) {
+              context.read<ThemeBloc>().getTheme();
+              context.read<SplashBloc>().add(GetDataUserAndConfigEvent());
             }
-            return const SizedBox();
-          }
-          if (state is ErrorGetDate) {
-            txt = state.errorMsg ?? 'ErrorGetDate';
-            // return _body(txtError);
-          }
-          return _body(txt, context);
-        },
+            if (state is Louding) {
+              txt = AppLocalizations.of(context)!.loudingUserInfo;
+            }
+            if (state is GetDataAndConfigState) {
+              txt = '';
+              if (!state.isUser) {
+                router.replace(const LoginRoute());
+              } else {
+                router.replace(const HomeRoute());
+              }
+              return const SizedBox();
+            }
+            if (state is ErrorGetDate) {
+              txt = 'Some thing went wrong';
+            }
+            return _body(txt, context);
+          },
+        ),
       ),
     );
   }

@@ -6,5 +6,8 @@
     "lablePass": "Password",
     "hintPass": "اكتب كلمة المرور الخاصة بك",
     "btnLogin": "تسجيل الدخول",
+    "titleErrorLogin":"خطأ في تسجيل الدخول",
+    "contentErrorLogin":"حدث خطأ ما، تحقق من معلوماتك وحاول مرة أخرى",
+    "okBtn":"موافق",
     "@@locale": "ar"
 }

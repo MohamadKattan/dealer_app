@@ -1,5 +1,4 @@
 // Define states of splash screen
-import 'package:dealer/models/user_model.dart';
 
 abstract class SplashState {}
 
@@ -12,10 +11,9 @@ class Louding extends SplashState {
 
 // state read user data & config if from local or remont.
 class GetDataAndConfigState extends SplashState {
-  final String? newTxet;
-  final User? user;
+  final bool isUser;
 
-  GetDataAndConfigState({this.newTxet, this.user});
+  GetDataAndConfigState({required this.isUser});
 }
 
 class ErrorGetDate extends SplashState {

@@ -1,50 +1,56 @@
 import 'dart:convert';
-
-import 'package:dealer/local_db/secure_db_controller.dart';
 import 'package:dealer/models/user_model.dart';
-import 'package:dealer/utilities/dev_helper/app_injector.dart';
+import 'package:dealer/utilities/dev_helper/app_getter.dart';
 import 'package:dealer/utilities/dev_helper/logger_controller.dart';
 import 'package:dealer/utilities/dyanmic_data_result/results_controller.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-enum LoginSubApi {
+enum LoginSubUrl {
   loginRoot('logIn');
 
-  const LoginSubApi(this.subRoute);
+  const LoginSubUrl(this.subRoute);
   final String subRoute;
 }
 
-class LoginBloc extends Cubit<int> {
-  LoginBloc() : super(0);
-  User user = User();
+enum LoginStateLavel {
+  initLogin(0),
+  startLogin(1),
+  successLogin(2),
+  failLogin(3);
 
-  Future<void> newLogin(String name, String passWord) async {
-    emit(1);
+  const LoginStateLavel(this.state);
+  final int state;
+}
+
+class LoginBloc extends Cubit<int> {
+  LoginBloc() : super(LoginStateLavel.initLogin.state);
+
+  Future<void> newLogin(
+      TextEditingController name, TextEditingController passWord) async {
+    emit(LoginStateLavel.startLogin.state);
     try {
-      user = User(userName: name, passWord: passWord);
-      final result = await AppInjector.httpSrv
-          .postData(LoginSubApi.loginRoot.subRoute, user.toJson());
-      if (result.status == ResultsLevel.fail) {
-        // display some thing to user
-        AppInjector.appLogger.showLogger(LogLevel.warning, '${result.data}');
-        emit(0);
+      final user = User(userName: name.text, passWord: passWord.text.trim());
+      final res = await AppGetter.httpSrv
+          .postData(LoginSubUrl.loginRoot.subRoute, user.toJson());
+      if (res.status == ResultsLevel.fail) {
+        emit(LoginStateLavel.failLogin.state);
+        AppGetter.appLogger.showLogger(LogLevel.warning, '${res.data}');
       } else {
-        final map = jsonDecode(result.data) as Map<String, dynamic>;
-        user = User.fromMap(map['data']);
-        String token = map['token'];
-        String convertUser = jsonEncode(
-            {'name': user.userName, 'per': user.per, 'id': user.userId});
-        await AppInjector.localeSecureStorag
-            .writeNewItem(KeySecureStorage.user.keySecure, convertUser);
-        final save = await AppInjector.localeSecureStorag
-            .writeNewItem(KeySecureStorage.token.keySecure, token);
-        AppInjector.appLogger.showLogger(LogLevel.info, save.status.toString());
-        emit(2);
+        final map = jsonDecode(res.data) as Map<String, dynamic>;
+        final resLocal = await AppGetter.userController.setUserToLocal(map);
+        if (resLocal.error != null) {
+          AppGetter.appLogger.showLogger(LogLevel.warning, '${resLocal.error}');
+          emit(LoginStateLavel.failLogin.state);
+        } else {
+          name.clear();
+          passWord.clear();
+          emit(LoginStateLavel.successLogin.state);
+        }
       }
     } catch (e) {
-      emit(0);
-      AppInjector.appLogger
-          .showLogger(LogLevel.error, '*** ${e.toString()}***');
+      emit(LoginStateLavel.failLogin.state);
+      AppGetter.appLogger.showLogger(LogLevel.error, '*** ${e.toString()}***');
     }
   }
 

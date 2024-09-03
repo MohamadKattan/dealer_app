@@ -6,5 +6,8 @@
     "lablePass": "PassWord",
     "hintPass": "Type your passWord",
     "btnLogin": "Login",
+    "titleErrorLogin":"Error login",
+    "contentErrorLogin":"Something wrong went check your info and try again",
+    "okBtn":"Ok",
     "@@locale": "en"
 }

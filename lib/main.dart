@@ -1,4 +1,6 @@
 import 'package:dealer/router/router_app.dart';
+import 'package:dealer/utilities/dev_helper/app_getter.dart';
+import 'package:dealer/utilities/dev_helper/logger_controller.dart';
 import 'package:dealer/views/login/bloc/login_bloc.dart';
 import 'package:dealer/views/splash/bloc/splash_bloc.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +9,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'utilities/style_app/app_them/bloc/them_bloc.dart';
 
-void main() {
+Future<void> main() async {
   // Bloc.observer = const AppBlocObserver();
+  final result = await AppGetter.userController.getUserFromLocal();
+  AppGetter.appLogger.showLogger(
+      result.error != null ? LogLevel.error : LogLevel.info,
+      'get user in main');
   runApp(MyApp());
 }
 
