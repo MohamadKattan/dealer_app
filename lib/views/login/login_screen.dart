@@ -22,6 +22,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final userName = TextEditingController();
   final passWord = TextEditingController();
+  bool show = true;
+  String? errorName;
+  String? errorPassword;
 
   @override
   void dispose() {
@@ -40,11 +43,24 @@ class _LoginScreenState extends State<LoginScreen> {
     StackRouter router = context.router;
     return BlocBuilder<LoginBloc, int>(
       builder: (_, state) {
+        if (state == LoginStateLavel.initLogin.state) {
+          errorName = null;
+          errorPassword = null;
+        }
+        if (state == LoginStateLavel.errorName.state) {
+          errorName = AppLocalizations.of(context)!.userNameIsRequired;
+        }
+        if (state == LoginStateLavel.errorPassword.state) {
+          errorPassword = AppLocalizations.of(context)!.passWordIsRequired;
+        }
+        if (state == LoginStateLavel.weakPassword.state) {
+          errorPassword = AppLocalizations.of(context)!.weakPassword;
+        }
         if (state == LoginStateLavel.successLogin.state) {
           router.push(const HomeRoute());
         }
         if (state == LoginStateLavel.failLogin.state) {
-          Future.delayed(const Duration(seconds: 1)).whenComplete(
+          Future.delayed(const Duration(milliseconds: 500)).whenComplete(
             () {
               if (!context.mounted) return;
               AppDialog.dialogBuilder(
@@ -81,6 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               children: [
                                 AppTextField.customField(
                                     controller: userName,
+                                    errorText: errorName,
                                     labelText:
                                         AppLocalizations.of(context)!.lableName,
                                     hintText:
@@ -88,11 +105,22 @@ class _LoginScreenState extends State<LoginScreen> {
                                     icons: Icons.person),
                                 AppTextField.customField(
                                     controller: passWord,
+                                    errorText: errorPassword,
+                                    suffix: IconButton(
+                                        onPressed: () {
+                                          show = !show;
+                                          context
+                                              .read<LoginBloc>()
+                                              .isShowPassword(show);
+                                        },
+                                        icon: Icon(show
+                                            ? Icons.visibility
+                                            : Icons.visibility_off)),
                                     labelText:
                                         AppLocalizations.of(context)!.lablePass,
                                     hintText:
                                         AppLocalizations.of(context)!.hintName,
-                                    obscureText: true,
+                                    obscureText: show,
                                     icons: Icons.password),
                                 const SizedBox(height: 20),
                                 state != LoginStateLavel.startLogin.state

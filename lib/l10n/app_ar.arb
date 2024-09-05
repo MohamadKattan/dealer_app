@@ -6,8 +6,11 @@
     "lablePass": "Password",
     "hintPass": "اكتب كلمة المرور الخاصة بك",
     "btnLogin": "تسجيل الدخول",
-    "titleErrorLogin":"خطأ في تسجيل الدخول",
-    "contentErrorLogin":"حدث خطأ ما، تحقق من معلوماتك وحاول مرة أخرى",
-    "okBtn":"موافق",
+    "titleErrorLogin": "خطأ في تسجيل الدخول",
+    "contentErrorLogin": "حدث خطأ ما، تحقق من معلوماتك وحاول مرة أخرى",
+    "okBtn": "موافق",
+    "weakPassword": "كلمة المرور ليست قوية بما فيه الكفاية.\n يجب أن تتضمن على الأقل حرفًا كبيرًا وحرفًا صغيرًا ورقمًا واحدًا.",
+    "passWordIsRequired":"كلمة المرور مطلوبة",
+    "userNameIsRequired":"اسم المستخدم مطلوب",
     "@@locale": "ar"
 }

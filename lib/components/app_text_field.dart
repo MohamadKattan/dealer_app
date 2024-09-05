@@ -14,6 +14,8 @@ class AppTextField {
       TextInputType? keyboardType,
       List<TextInputFormatter>? inputFormatters,
       Widget? suffixIcon,
+      Widget? suffix,
+      String? errorText,
       IconData? icons}) {
     return Padding(
       padding: EdgeInsets.all(padding ?? 8.0),
@@ -25,7 +27,9 @@ class AppTextField {
         inputFormatters: inputFormatters,
         decoration: InputDecoration(
           labelText: labelText,
+          errorText: errorText,
           hintText: hintText,
+          suffix: suffix ?? const Icon(Icons.abc),
           prefixIcon: Icon(icons),
           suffixIcon: suffixIcon,
           border: const OutlineInputBorder(),

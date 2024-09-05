@@ -6,8 +6,11 @@
     "lablePass": "Şifre",
     "hintPass": "Şifrenizi yazın",
     "btnLogin": "Giriş yap",
-    "titleErrorLogin":"Giriş hatası",
-    "contentErrorLogin":"Bir sorun oluştu. Bilgilerinizi kontrol edip tekrar deneyin.",
-    "okBtn":"Tamam",
+    "titleErrorLogin": "Giriş hatası",
+    "contentErrorLogin": "Bir sorun oluştu. Bilgilerinizi kontrol edip tekrar deneyin.",
+    "okBtn": "Tamam",
+    "weakPassword": "Şifre yeterince güçlü değil.\n En azından bir büyük harf,\n bir küçük harf ve bir rakam içermelidir.",
+    "passWordIsRequired": "Şifre gerekli",
+    "userNameIsRequired": "userName Gereklidir",
     "@@locale": "tr"
 }

@@ -6,8 +6,11 @@
     "lablePass": "PassWord",
     "hintPass": "Type your passWord",
     "btnLogin": "Login",
-    "titleErrorLogin":"Error login",
-    "contentErrorLogin":"Something wrong went check your info and try again",
-    "okBtn":"Ok",
+    "titleErrorLogin": "Error login",
+    "contentErrorLogin": "Something wrong went check your info and try again",
+    "okBtn": "Ok",
+    "weakPassword": "Password is not strong enough.\nIt should include at least an uppercase ,\na lowercase and one digit.",
+    "passWordIsRequired":"Password is required",
+    "userNameIsRequired":"userName Is Required",
     "@@locale": "en"
 }
