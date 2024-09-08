@@ -61,6 +61,6 @@ class UserController {
     _user = user;
     AppGetter.per = _user.per ?? 'null per';
     AppGetter.usertoken = _user.token ?? 'null token';
+    AppGetter.userName = _user.userName ?? 'null UserName';
   }
-
 }

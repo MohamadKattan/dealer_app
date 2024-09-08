@@ -5,6 +5,7 @@ import 'package:dealer/local_db/hive_db_controller.dart';
 import 'package:dealer/local_db/secure_db_controller.dart';
 import 'package:dealer/utilities/client_server/app_https_srv.dart';
 import 'package:dealer/utilities/dev_helper/logger_controller.dart';
+import 'package:flutter/material.dart';
 
 class AppGetter {
   static final _localStorage = LocalStorage();
@@ -22,6 +23,17 @@ class AppGetter {
   static final UserController _userController = UserController();
   static UserController get userController => _userController;
 
+  static final GlobalKey<ScaffoldState> _scaffoldKey =
+      GlobalKey<ScaffoldState>();
+  static GlobalKey<ScaffoldState> get scaffoldKey => _scaffoldKey;
+
+// user
   static String? usertoken;
   static String? per;
+  static String? userName;
+// env
+  static String? checkPer;
+// val in drawer
+  static bool isMorning = false;
+  static String? dateOFToday;
 }

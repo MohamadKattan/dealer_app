@@ -57,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
           errorPassword = AppLocalizations.of(context)!.weakPassword;
         }
         if (state == LoginStateLavel.successLogin.state) {
-          router.push(const HomeRoute());
+          router.replace(const HomeRoute());
         }
         if (state == LoginStateLavel.failLogin.state) {
           Future.delayed(const Duration(milliseconds: 500)).whenComplete(

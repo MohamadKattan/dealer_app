@@ -71,7 +71,7 @@ class SplashScreen extends StatelessWidget {
               child: SizedBox(
                   width: 200, child: AppIndicators.loadingLinearIndicator),
             ),
-            AppText.normalTxet(txt)
+            AppText.normalText(txt)
           ],
         ),
       )),

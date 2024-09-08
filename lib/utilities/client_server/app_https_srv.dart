@@ -1,7 +1,9 @@
 import 'package:dealer/utilities/dyanmic_data_result/results_controller.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppHttpsSrv {
+  String baseUrl = dotenv.get('API_URL', fallback: 'sane-default');
   Map<String, String> normalHeader = {'Content-Type': 'application/json'};
   Map<String, String> authHeader = {
     'Content-Type': 'application/json',
@@ -10,12 +12,12 @@ class AppHttpsSrv {
   final dio = Dio(BaseOptions(
       sendTimeout: const Duration(milliseconds: 5000),
       receiveTimeout: const Duration(milliseconds: 5000),
-      baseUrl: 'http://localhost:3000/api/',
       validateStatus: (status) => status! < 500));
 
   Future<ResultController> getData(String root) async {
     try {
       dio.interceptors.add(LogInterceptor(responseBody: true));
+      dio.options.baseUrl = baseUrl;
       final response = await dio.get(root);
       if (response.statusCode != null &&
           (response.statusCode! < 200 || response.statusCode! >= 300)) {
@@ -31,6 +33,7 @@ class AppHttpsSrv {
   Future<ResultController> postData(String url, Object data) async {
     try {
       // dio.interceptors.add(LogInterceptor(responseBody: true));
+      dio.options.baseUrl = baseUrl;
       dio.options.headers = normalHeader;
       final response = await dio.post(url, data: data);
       if (response.statusCode != null &&
@@ -49,6 +52,7 @@ class AppHttpsSrv {
   Future<ResultController> putData(String url, Object data) async {
     try {
       dio.interceptors.add(LogInterceptor(responseBody: true));
+      dio.options.baseUrl = baseUrl;
       Response response = await dio.put(url, data: data);
       if (response.statusCode != null &&
           (response.statusCode! < 200 || response.statusCode! >= 300)) {
@@ -64,6 +68,7 @@ class AppHttpsSrv {
   Future<ResultController> deleteData(String url, Object data) async {
     try {
       dio.interceptors.add(LogInterceptor(responseBody: true));
+      dio.options.baseUrl = baseUrl;
       Response response = await dio.delete(url, data: data);
       if (response.statusCode != null &&
           (response.statusCode! < 200 || response.statusCode! >= 300)) {

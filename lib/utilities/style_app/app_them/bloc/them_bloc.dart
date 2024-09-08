@@ -45,7 +45,7 @@ class ThemeBloc extends Cubit<ThemeData> {
     }
   }
 
-  void toggleTheme() async {
+   toggleTheme() async {
     emit(state.brightness == Brightness.dark
         ? AppTheme.lightTheme
         : AppTheme.darkTheme);

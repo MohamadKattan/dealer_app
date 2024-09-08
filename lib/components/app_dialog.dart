@@ -18,8 +18,8 @@ class AppDialog {
         return SizedBox(
           width: 200,
           child: AlertDialog(
-            title: AppText.normalTxet(title),
-            content: AppText.normalTxet(content),
+            title: AppText.normalText(title),
+            content: AppText.normalText(content),
             actions: <Widget>[
               AppBtn.elevBtn(
                   onPressed: onPressedPop, txt: txtPop, bgColor: Colors.white),

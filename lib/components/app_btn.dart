@@ -16,7 +16,7 @@ class AppBtn {
       onLongPress: onLongPress,
       style: ButtonStyle(
           backgroundColor: WidgetStateProperty.all<Color?>(bgColor)),
-      child: AppText.normalTxet(txt, fontSize: 18),
+      child: AppText.normalText(txt, fontSize: 18),
     );
   }
 
@@ -29,5 +29,34 @@ class AppBtn {
           padding: EdgeInsets.all(16.0),
           child: AppIndicators.loadingCircularIndicator,
         ));
+  }
+
+  static Widget iconBtn(
+      {required IconData icon,
+      Function()? onPressed,
+      double? size,
+      Color? color}) {
+    return IconButton(
+        padding: const EdgeInsets.all(0.09),
+        onPressed: onPressed,
+        icon: Icon(icon, size: size));
+  }
+
+  static Widget floatingBtn(
+      {required IconData icon,
+      Function()? onPressed,
+      String? tooltip,
+      double? size,
+      Color? color}) {
+    return FloatingActionButton(
+      onPressed: onPressed,
+      tooltip: tooltip ?? '',
+      mouseCursor: MouseCursor.defer,
+      child: Icon(
+        icon,
+        size: size,
+        color: color,
+      ),
+    );
   }
 }
