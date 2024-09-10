@@ -12,5 +12,14 @@
     "weakPassword": "Password is not strong enough.\nIt should include at least an uppercase ,\na lowercase and one digit.",
     "passWordIsRequired":"Password is required",
     "userNameIsRequired":"userName Is Required",
+    "controlPanel":"Control Panel",
+    "dailyMovement":"Daily Movement",
+    "warehouse":"Warehouse",
+    "treeOfAccounts":"Tree Of Accounts",
+    "bills":"Bills",
+    "darkLight":"DarkMode/lightMode",
+    "date":"Date",
+    "goodMorning":"Good Morning",
+    "goodNight":"Good Evening ",
     "@@locale": "en"
 }

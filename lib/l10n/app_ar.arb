@@ -12,5 +12,14 @@
     "weakPassword": "كلمة المرور ليست قوية بما فيه الكفاية.\n يجب أن تتضمن على الأقل حرفًا كبيرًا وحرفًا صغيرًا ورقمًا واحدًا.",
     "passWordIsRequired":"كلمة المرور مطلوبة",
     "userNameIsRequired":"اسم المستخدم مطلوب",
+    "controlPanel":"لوحة التحكم",
+    "dailyMovement":"الحركة اليومية",
+    "warehouse":"المستودع",
+    "treeOfAccounts":"شجرة الحسابات",
+    "bills":"فواتير",
+    "darkLight":"الوضع المظلم/الوضع الفاتح",
+    "date":"التاريخ",
+    "goodMorning":"صباح الخير",
+    "goodNight":"مساء الخير",
     "@@locale": "ar"
 }

@@ -7,11 +7,11 @@ class AppText {
       TextAlign? textAlign,
       FontWeight? fontWeight}) {
     return Padding(
-      padding: EdgeInsets.all(padding ?? 8.0),
+      padding: EdgeInsets.all(padding ?? 6.0),
       child: Text(
         textAlign: textAlign ?? TextAlign.center,
         txt,
-        style: TextStyle(fontSize: fontSize ?? 18, fontWeight: fontWeight),
+        style: TextStyle(fontSize: fontSize ?? 16, fontWeight: fontWeight),
       ),
     );
   }

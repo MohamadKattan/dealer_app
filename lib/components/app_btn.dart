@@ -1,3 +1,4 @@
+import 'package:dealer/components/app_icon.dart';
 import 'package:dealer/components/app_indicators.dart';
 import 'package:dealer/components/app_text.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +57,24 @@ class AppBtn {
         icon,
         size: size,
         color: color,
+      ),
+    );
+  }
+
+  static cardBtn(
+      {Function()? function, IconData? icon, double? sizeIcon, String? txt}) {
+    return GestureDetector(
+      onTap: function,
+      child: Card(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppIcon.normalIcon(icon ?? Icons.abc, size: sizeIcon),
+            AppText.normalText(txt ?? '')
+          ],
+        ),
       ),
     );
   }
