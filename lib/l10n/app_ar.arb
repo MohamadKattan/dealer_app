@@ -21,5 +21,11 @@
     "date":"التاريخ",
     "goodMorning":"صباح الخير",
     "goodNight":"مساء الخير",
+    "dbSetting":"إعدادات\n قاعدة البيانات",
+    "employesSettings":"إعدادات\nالموظفين",
+    "retailSalesCenters":"مراكز\nمبيعات التجزئة",
+    "wareHouseSettings":"إعدادات\nالمستودع",
+    "carSalesCenters":"إعدادات\nمبيعات السيارات",
+    "coustmersCenters":"مراكز\n العملاء",
     "@@locale": "ar"
 }

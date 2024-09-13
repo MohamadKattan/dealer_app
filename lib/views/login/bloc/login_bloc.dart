@@ -94,5 +94,6 @@ class LoginBloc extends Cubit<int> {
   }
 
   Future<void> createNewUser() async {}
+
   Future<void> signOut() async {}
 }

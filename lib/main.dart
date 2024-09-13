@@ -2,6 +2,7 @@ import 'package:dealer/controller/helper_methods_controller.dart';
 import 'package:dealer/router/router_app.dart';
 import 'package:dealer/utilities/dev_helper/app_getter.dart';
 import 'package:dealer/utilities/dev_helper/logger_controller.dart';
+import 'package:dealer/views/admin/db_remote_setting/bloc/db_remote_bloc.dart';
 import 'package:dealer/views/login/bloc/login_bloc.dart';
 import 'package:dealer/views/splash/bloc/splash_bloc.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,8 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<SplashBloc>(create: (_) => SplashBloc()),
         BlocProvider<ThemeBloc>(create: (_) => ThemeBloc()),
-        BlocProvider<LoginBloc>(create: (_) => LoginBloc())
+        BlocProvider<LoginBloc>(create: (_) => LoginBloc()),
+        BlocProvider<DbRemoteBloc>(create: (_) => DbRemoteBloc())
       ],
       child: BlocBuilder<ThemeBloc, ThemeData>(
         builder: (_, theme) {

@@ -21,5 +21,11 @@
     "date":"Date",
     "goodMorning":"Good Morning",
     "goodNight":"Good Evening ",
+    "dbSetting":"Database\nSettings",
+    "employesSettings":"Employes\nSettings",
+    "retailSalesCenters":"RetailSales\nCenters",
+    "wareHouseSettings":"WareHouse\nSettings",
+    "carSalesCenters":"Car Sales\nSettings",
+    "coustmersCenters":"Coustmers\nCenters",
     "@@locale": "en"
 }

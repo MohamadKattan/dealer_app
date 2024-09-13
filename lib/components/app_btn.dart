@@ -62,20 +62,41 @@ class AppBtn {
   }
 
   static cardBtn(
-      {Function()? function, IconData? icon, double? sizeIcon, String? txt}) {
-    return GestureDetector(
-      onTap: function,
-      child: Card(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AppIcon.normalIcon(icon ?? Icons.abc, size: sizeIcon),
-            AppText.normalText(txt ?? '')
-          ],
-        ),
-      ),
-    );
+      {Function()? function,
+      IconData? icon,
+      double? sizeIcon,
+      String? txt,
+      Color? color}) {
+    final ValueNotifier<bool> isHovered = ValueNotifier<bool>(false);
+    return ValueListenableBuilder<bool>(
+        valueListenable: isHovered,
+        builder: (context, hovered, child) {
+          return MouseRegion(
+            onEnter: (_) => isHovered.value = true,
+            onExit: (_) => isHovered.value = false,
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: function,
+              child: Card(
+                color: color,
+                elevation: hovered ? 10 : 2,
+                shadowColor: hovered
+                    ? const Color.fromARGB(255, 59, 154, 201)
+                    : Colors.transparent,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    icon != null
+                        ? AppIcon.normalIcon(icon, size: sizeIcon)
+                        : const SizedBox(),
+                    AppText.normalText(txt ?? '')
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
   }
 }

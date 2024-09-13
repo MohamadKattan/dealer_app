@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:dealer/utilities/dev_helper/app_getter.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -29,6 +30,21 @@ class HelperMethods {
     AppGetter.dateOFToday = formatter.format(date);
     if (date.hour < 12) {
       AppGetter.isMorning = true;
+    }
+  }
+
+  static void popMethod(BuildContext context, PageRouteInfo<dynamic> route) {
+    StackRouter router = context.router;
+    router.popAndPush(route);
+  }
+
+  static void pushMethod(
+      BuildContext context, PageRouteInfo<dynamic> route, bool replace) {
+    StackRouter router = context.router;
+    if (replace) {
+      router.replace(route);
+    } else {
+      router.push(route);
     }
   }
 }
