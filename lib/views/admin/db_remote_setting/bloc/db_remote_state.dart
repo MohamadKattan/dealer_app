@@ -2,10 +2,7 @@ abstract class DbRemoteState {}
 
 class Inite extends DbRemoteState {}
 
-class LoudingState extends DbRemoteState {
-  bool? isLouding;
-  LoudingState({this.isLouding});
-}
+class LoudingState extends DbRemoteState {}
 
 class ClickCreateTableState extends DbRemoteState {
   bool? isClicked;
@@ -23,3 +20,9 @@ class AddNewColumnState extends DbRemoteState {}
 class RemoveOneColumnState extends DbRemoteState {}
 
 class RefreshTableState extends DbRemoteState {}
+
+class SaveTableOnRemoteDbState extends DbRemoteState {
+  String? error;
+  String? msg;
+  SaveTableOnRemoteDbState({this.error, this.msg});
+}

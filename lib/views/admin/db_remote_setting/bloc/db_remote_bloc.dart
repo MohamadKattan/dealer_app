@@ -1,6 +1,19 @@
+import 'dart:async';
+
+import 'package:dealer/models/db_remote_model.dart';
+import 'package:dealer/utilities/dev_helper/app_getter.dart';
+import 'package:dealer/utilities/dev_helper/logger_controller.dart';
+import 'package:dealer/utilities/dyanmic_data_result/results_controller.dart';
 import 'package:dealer/views/admin/db_remote_setting/bloc/db_remote_event.dart';
 import 'package:dealer/views/admin/db_remote_setting/bloc/db_remote_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+enum DbRemoteSubUrl {
+  createNewTable('createTable');
+
+  const DbRemoteSubUrl(this.subRoute);
+  final String subRoute;
+}
 
 class DbRemoteBloc extends Bloc<DbRemoteEvent, DbRemoteState> {
   DbRemoteBloc() : super(Inite()) {
@@ -9,7 +22,9 @@ class DbRemoteBloc extends Bloc<DbRemoteEvent, DbRemoteState> {
     on<AddNewColumnEvent>(_addNewColumn);
     on<RemoveOneColumnEvent>(_removeOneColumn);
     on<RefreshAllTablesEvent>(_refreshTablseBtn);
+    on<SaveTableOnRemoteDbEvent>(_saveTableOnRemoteDb);
   }
+
   _clickCreateNewTablebTN(
       ClickCreateTableEvent event, Emitter<DbRemoteState> emit) {
     emit(ClickCreateTableState(isClicked: true));
@@ -30,5 +45,35 @@ class DbRemoteBloc extends Bloc<DbRemoteEvent, DbRemoteState> {
 
   _removeOneColumn(RemoveOneColumnEvent event, Emitter<DbRemoteState> emit) {
     emit(RemoveOneColumnState());
+  }
+
+  _saveTableOnRemoteDb(
+      SaveTableOnRemoteDbEvent event, Emitter<DbRemoteState> emit) async {
+    String? tableName = event.tableName;
+    if (tableName.isEmpty) {
+      emit(SaveTableOnRemoteDbState(error: 'Table Name is empty'));
+      return;
+    }
+
+    try {
+      emit(LoudingState());
+      final tableModel =
+          DbRemoteModel(tableName: tableName, listOfColumns: event.listColumn);
+      final body = tableModel.toJson();
+      final res = await AppGetter.httpSrv
+          .postData(DbRemoteSubUrl.createNewTable.subRoute, body);
+      if (res.status == ResultsLevel.fail) {
+        AppGetter.appLogger
+            .showLogger(LogLevel.error, res.data['msg'] ?? 'error');
+        emit(SaveTableOnRemoteDbState(error: res.data['msg'] ?? 'error'));
+        return;
+      }
+      emit(SaveTableOnRemoteDbState(
+          msg: 'New table has been created on your remote database'));
+    } catch (e) {
+      emit(SaveTableOnRemoteDbState(error: e.toString()));
+      AppGetter.appLogger
+          .showLogger(LogLevel.error, 'An expected error ${e.toString()}');
+    }
   }
 }

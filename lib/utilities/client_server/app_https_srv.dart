@@ -1,3 +1,4 @@
+import 'package:dealer/utilities/dev_helper/app_getter.dart';
 import 'package:dealer/utilities/dyanmic_data_result/results_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -7,7 +8,7 @@ class AppHttpsSrv {
   Map<String, String> normalHeader = {'Content-Type': 'application/json'};
   Map<String, String> authHeader = {
     'Content-Type': 'application/json',
-    'Authorization': 'token'
+    'Authorization': AppGetter.usertoken ?? 'null'
   };
   final dio = Dio(BaseOptions(
       sendTimeout: const Duration(milliseconds: 5000),
@@ -34,7 +35,7 @@ class AppHttpsSrv {
     try {
       // dio.interceptors.add(LogInterceptor(responseBody: true));
       dio.options.baseUrl = baseUrl;
-      dio.options.headers = normalHeader;
+      dio.options.headers = authHeader;
       final response = await dio.post(url, data: data);
       if (response.statusCode != null &&
           (response.statusCode! < 200 || response.statusCode! >= 300)) {

@@ -53,11 +53,7 @@ class AppBtn {
       onPressed: onPressed,
       tooltip: tooltip ?? '',
       mouseCursor: MouseCursor.defer,
-      child: Icon(
-        icon,
-        size: size,
-        color: color,
-      ),
+      child: Icon(icon, size: size, color: color),
     );
   }
 
