@@ -26,3 +26,9 @@ class SaveTableOnRemoteDbState extends DbRemoteState {
   String? msg;
   SaveTableOnRemoteDbState({this.error, this.msg});
 }
+
+class GetAllTablesState extends DbRemoteState {
+  String? error;
+  List? tables;
+  GetAllTablesState({this.error, this.tables});
+}

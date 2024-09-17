@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dealer/models/db_remote_model.dart';
 import 'package:dealer/utilities/dev_helper/app_getter.dart';
@@ -9,7 +10,8 @@ import 'package:dealer/views/admin/db_remote_setting/bloc/db_remote_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 enum DbRemoteSubUrl {
-  createNewTable('createTable');
+  createNewTable('createTable'),
+  getAllTables('showTables');
 
   const DbRemoteSubUrl(this.subRoute);
   final String subRoute;
@@ -23,6 +25,7 @@ class DbRemoteBloc extends Bloc<DbRemoteEvent, DbRemoteState> {
     on<RemoveOneColumnEvent>(_removeOneColumn);
     on<RefreshAllTablesEvent>(_refreshTablseBtn);
     on<SaveTableOnRemoteDbEvent>(_saveTableOnRemoteDb);
+    on<GetAllTablesEvent>(_getAllTablesFromDb);
   }
 
   _clickCreateNewTablebTN(
@@ -61,19 +64,41 @@ class DbRemoteBloc extends Bloc<DbRemoteEvent, DbRemoteState> {
           DbRemoteModel(tableName: tableName, listOfColumns: event.listColumn);
       final body = tableModel.toJson();
       final res = await AppGetter.httpSrv
-          .postData(DbRemoteSubUrl.createNewTable.subRoute, body);
+          .postData(DbRemoteSubUrl.createNewTable.subRoute, body, isAuth: true);
+      final deCodeData = jsonDecode(res.data);
       if (res.status == ResultsLevel.fail) {
         AppGetter.appLogger
-            .showLogger(LogLevel.error, res.data['msg'] ?? 'error');
-        emit(SaveTableOnRemoteDbState(error: res.data['msg'] ?? 'error'));
+            .showLogger(LogLevel.error, deCodeData['msg'] ?? 'error');
+        emit(SaveTableOnRemoteDbState(error: deCodeData['msg'] ?? 'error'));
         return;
       }
-      emit(SaveTableOnRemoteDbState(
-          msg: 'New table has been created on your remote database'));
+      emit(SaveTableOnRemoteDbState(msg: deCodeData['msg']));
     } catch (e) {
       emit(SaveTableOnRemoteDbState(error: e.toString()));
       AppGetter.appLogger
           .showLogger(LogLevel.error, 'An expected error ${e.toString()}');
+    }
+  }
+
+  _getAllTablesFromDb(
+      GetAllTablesEvent event, Emitter<DbRemoteState> emit) async {
+    try {
+      // emit(LoudingState());
+      final res = await AppGetter.httpSrv
+          .getData(DbRemoteSubUrl.getAllTables.subRoute, isAuth: true);
+
+      final deCodeData = jsonDecode(res.data);
+
+      if (res.status == ResultsLevel.fail) {
+        final newErrorMsg = deCodeData['msg'] ?? 'error to get All Tables**';
+        AppGetter.appLogger.showLogger(LogLevel.error, newErrorMsg);
+        emit(GetAllTablesState(error: newErrorMsg));
+        return;
+      }
+      emit(GetAllTablesState(tables: deCodeData['data']));
+    } catch (e) {
+      AppGetter.appLogger.showLogger(LogLevel.error, e.toString());
+      emit(GetAllTablesState(error: 'Un handel error while get tables'));
     }
   }
 }

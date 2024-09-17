@@ -15,14 +15,18 @@ class AppHttpsSrv {
       receiveTimeout: const Duration(milliseconds: 5000),
       validateStatus: (status) => status! < 500));
 
-  Future<ResultController> getData(String root) async {
+  Future<ResultController> getData(String root, {bool isAuth = false}) async {
     try {
       dio.interceptors.add(LogInterceptor(responseBody: true));
       dio.options.baseUrl = baseUrl;
+      if (isAuth) {
+        dio.options.headers = authHeader;
+      }
       final response = await dio.get(root);
       if (response.statusCode != null &&
           (response.statusCode! < 200 || response.statusCode! >= 300)) {
-        return ResultController(data: response.data, status: ResultsLevel.fail);
+        return ResultController(
+            data: response.data, status: ResultsLevel.fail, error: 'error');
       }
       return ResultController(
           data: response.data, status: ResultsLevel.success);
@@ -31,11 +35,14 @@ class AppHttpsSrv {
     }
   }
 
-  Future<ResultController> postData(String url, Object data) async {
+  Future<ResultController> postData(String url, Object data,
+      {bool isAuth = false}) async {
     try {
       // dio.interceptors.add(LogInterceptor(responseBody: true));
       dio.options.baseUrl = baseUrl;
-      dio.options.headers = authHeader;
+      if (isAuth) {
+        dio.options.headers = authHeader;
+      }
       final response = await dio.post(url, data: data);
       if (response.statusCode != null &&
           (response.statusCode! < 200 || response.statusCode! >= 300)) {

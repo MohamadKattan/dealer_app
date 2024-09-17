@@ -34,7 +34,8 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
   final autoIncrement = TextEditingController();
   final defaultValuse = TextEditingController();
   String? errorColumn;
-  List newList = [];
+  List listCreateColumns = [];
+  List? listAllTables;
 
   @override
   void dispose() {
@@ -55,8 +56,16 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
       child: Scaffold(
         body: BlocBuilder<DbRemoteBloc, DbRemoteState>(
           builder: (_, state) {
+            if (state is Inite) {
+              context.read<DbRemoteBloc>().add(GetAllTablesEvent());
+            }
             if (state is LoudingState) {
               return _louding();
+            }
+            if (state is GetAllTablesState) {
+              if (state.tables != null) {
+                listAllTables = state.tables;
+              }
             }
             if (state is ClickCreateTableState) {
               isCreate = state.isClicked ?? false;
@@ -81,74 +90,93 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
   }
 
   Widget _body() {
-    double width = UiResponsive.globalMedia(context: context);
     return SingleChildScrollView(
       child: Column(
         children: [
           Container(color: Colors.lightBlue.shade100, height: 8.0),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                AppBtn.cardBtn(
-                    color: Colors.greenAccent,
-                    function: () {
-                      if (isCreate) return;
-                      context.read<DbRemoteBloc>().add(ClickCreateTableEvent());
-                    },
-                    txt: 'Create'),
-                AppBtn.cardBtn(
-                    function: () {
-                      if (!isCreate) return;
-                      context
-                          .read<DbRemoteBloc>()
-                          .add(CancleCreateTableEvent());
-                    },
-                    txt: 'Cancle',
-                    color: Colors.redAccent),
-                AppBtn.cardBtn(txt: 'Refresh', color: Colors.amber),
-                CircleAvatar(
-                  radius: 25,
-                  child: AppBtn.iconBtn(
-                    onPressed: () {
-                      HelperMethods.popMethod(context,
-                          route: const ControlRoute());
-                    },
-                    icon: Icons.exit_to_app_outlined,
-                    size: 35,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          _header(),
           const SizedBox(height: 20),
-          isCreate
-              ? SizedBox(
-                  width: width,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                      child: Column(
-                        children: [
-                          _titleAndBtn(),
-                          _divider(),
-                          _newColumn(),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              : const SizedBox(),
-          Column(
-            children: [
-              newList.isNotEmpty ? _headerTable() : const SizedBox(),
-              _columnsTable()
-            ],
+          _getAllTables(),
+          const SizedBox(height: 20),
+          _startCreateNewTable(),
+          const SizedBox(height: 20),
+          _listOfColumnBeforSave(),
+        ],
+      ),
+    );
+  }
+
+  Widget _header() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          AppBtn.cardBtn(
+              color: Colors.greenAccent,
+              function: () {
+                if (isCreate) return;
+                context.read<DbRemoteBloc>().add(ClickCreateTableEvent());
+              },
+              txt: 'Create'),
+          AppBtn.cardBtn(
+              function: () {
+                if (!isCreate) return;
+                context.read<DbRemoteBloc>().add(CancleCreateTableEvent());
+              },
+              txt: 'Cancle',
+              color: Colors.redAccent),
+          AppBtn.cardBtn(txt: 'Refresh', color: Colors.amber),
+          CircleAvatar(
+            radius: 25,
+            child: AppBtn.iconBtn(
+              onPressed: () {
+                HelperMethods.popMethod(context, route: const ControlRoute());
+              },
+              icon: Icons.exit_to_app_outlined,
+              size: 35,
+            ),
           ),
         ],
       ),
     );
+  }
+
+// get all atble from remote that exist
+  Widget _getAllTables() {
+    return listAllTables != null
+        ? SizedBox(
+            height: 200,
+            child: ListView.builder(
+              itemCount: listAllTables!.length,
+              itemBuilder: (_, i) {
+                return Text(listAllTables![i].toString());
+              },
+            ),
+          )
+        : const SizedBox();
+  }
+
+// to create new table
+  Widget _startCreateNewTable() {
+    double width = UiResponsive.globalMedia(context: context);
+    return isCreate
+        ? SizedBox(
+            width: width,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Card(
+                child: Column(
+                  children: [
+                    _titleAndBtn(),
+                    _divider(),
+                    _newColumn(),
+                  ],
+                ),
+              ),
+            ),
+          )
+        : const SizedBox();
   }
 
   Widget _titleAndBtn() {
@@ -163,7 +191,7 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
                   fontSize: 18, fontWeight: FontWeight.bold),
               Row(
                 children: [
-                  newList.isNotEmpty
+                  listCreateColumns.isNotEmpty
                       ? AppBtn.iconBtn(
                           onPressed: () {
                             AppDialog.dialogBuilder(
@@ -275,7 +303,19 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
     );
   }
 
-  Widget _headerTable() {
+// list of columns befor save in remote database
+  Widget _listOfColumnBeforSave() {
+    return Column(
+      children: [
+        listCreateColumns.isNotEmpty
+            ? _headerListOfColumnBeforSave()
+            : const SizedBox(),
+        _bodyListofColumnsBeforSave()
+      ],
+    );
+  }
+
+  Widget _headerListOfColumnBeforSave() {
     return Padding(
       padding: const EdgeInsets.only(left: 12, right: 12),
       child: Table(
@@ -299,11 +339,11 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
     );
   }
 
-  Widget _columnsTable() {
+  Widget _bodyListofColumnsBeforSave() {
     return SizedBox(
       height: 200,
       child: ListView.builder(
-        itemCount: newList.length,
+        itemCount: listCreateColumns.length,
         itemBuilder: (_, i) {
           Color rowColor = i % 2 == 0 ? Colors.grey[300]! : Colors.white;
           return Padding(
@@ -317,34 +357,34 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
                     TableCell(
                         child: Center(
                             child: AppText.normalText(
-                                newList[i]['name'] ?? 'null'))),
-                    TableCell(
-                        child: Center(
-                            child:
-                                AppText.normalText('${newList[i]['type']}'))),
+                                listCreateColumns[i]['name'] ?? 'null'))),
                     TableCell(
                         child: Center(
                             child: AppText.normalText(
-                                '${newList[i]['notNull']}'))),
+                                '${listCreateColumns[i]['type']}'))),
                     TableCell(
                         child: Center(
                             child: AppText.normalText(
-                                '${newList[i]['defualt']}'))),
+                                '${listCreateColumns[i]['notNull']}'))),
                     TableCell(
                         child: Center(
                             child: AppText.normalText(
-                                '${newList[i]['autoIncrement']}'))),
+                                '${listCreateColumns[i]['defualt']}'))),
                     TableCell(
                         child: Center(
                             child: AppText.normalText(
-                                '${newList[i]['primaryKey']}'))),
+                                '${listCreateColumns[i]['autoIncrement']}'))),
+                    TableCell(
+                        child: Center(
+                            child: AppText.normalText(
+                                '${listCreateColumns[i]['primaryKey']}'))),
                     TableCell(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Expanded(
                             child: AppText.normalText(
-                                '${newList[i]['foreignKey']}'),
+                                '${listCreateColumns[i]['foreignKey']}'),
                           ),
                           AppBtn.iconBtn(
                               onPressed: () {
@@ -364,6 +404,7 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
     );
   }
 
+// louding
   Widget _louding() {
     return Container(
         width: UiResponsive.globalMedia(context: context),
@@ -379,6 +420,7 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
         ));
   }
 
+// methods
   void _addAndclear() async {
     if (columnName.text.isEmpty) {
       errorColumn = 'Column name is empty';
@@ -396,19 +438,19 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
       "foreignKey": forginKey.text == 'false' ? false : true,
     };
 
-    newList.add(newColoumn);
+    listCreateColumns.add(newColoumn);
     _clear();
   }
 
   void _removeOneColumn(BuildContext context, int i) {
-    newList.removeAt(i);
+    listCreateColumns.removeAt(i);
     context.read<DbRemoteBloc>().add(RemoveOneColumnEvent());
   }
 
   void _saveTableOnRemoteDb(BuildContext context) {
     HelperMethods.popMethod(context);
     context.read<DbRemoteBloc>().add(SaveTableOnRemoteDbEvent(
-        tableName: tableName.text, listColumn: newList));
+        tableName: tableName.text, listColumn: listCreateColumns));
   }
 
   void _showMsg(BuildContext context, String txt) {
@@ -432,7 +474,7 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
     if (init ?? false) {
       isCreate = false;
       tableName.clear();
-      newList.clear();
+      listCreateColumns.clear();
     }
     columnName.clear();
     defaultValuse.clear();

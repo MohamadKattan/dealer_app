@@ -15,3 +15,5 @@ class SaveTableOnRemoteDbEvent extends DbRemoteEvent {
   List listColumn;
   SaveTableOnRemoteDbEvent({required this.tableName, required this.listColumn});
 }
+
+class GetAllTablesEvent extends DbRemoteEvent {}
