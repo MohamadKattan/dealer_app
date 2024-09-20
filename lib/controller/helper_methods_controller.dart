@@ -33,10 +33,11 @@ class HelperMethods {
     }
   }
 
-  static void popMethod(BuildContext context, {PageRouteInfo<dynamic>? route}) {
+  static void popMethod(BuildContext context,
+      {PageRouteInfo<dynamic>? route, bool rePlace = false}) {
     StackRouter router = context.router;
-    if (route != null) {
-      router.popAndPush(route);
+    if (rePlace && route != null) {
+      router.replace(route);
     } else {
       router.maybePop();
     }

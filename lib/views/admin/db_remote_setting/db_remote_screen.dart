@@ -52,43 +52,76 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: BlocBuilder<DbRemoteBloc, DbRemoteState>(
-          builder: (_, state) {
-            if (state is Inite) {
-              context.read<DbRemoteBloc>().add(GetAllTablesEvent());
-            }
-            if (state is LoudingState) {
-              return _louding();
-            }
-            if (state is GetAllTablesState) {
-              if (state.tables != null) {
-                listAllTables = state.tables;
+    return PopScope(
+      canPop: false,
+      child: SafeArea(
+        child: Scaffold(
+          body: BlocBuilder<DbRemoteBloc, DbRemoteState>(
+            builder: (_, state) {
+              if (state is Inite) {
+                context.read<DbRemoteBloc>().add(GetAllTablesEvent());
               }
-            }
-            if (state is ClickCreateTableState) {
-              isCreate = state.isClicked ?? false;
-            }
-            if (state is CancleCreateTableState) {
-              isCreate = state.isClicked ?? true;
-            }
-            if (state is SaveTableOnRemoteDbState) {
-              if (state.error != null) {
-                _showMsg(context, state.error ?? 'null');
+              if (state is LoudingState) {
+                return _louding();
               }
-              if (state.msg != null) {
-                _showMsg(context, state.msg ?? 'null');
+              if (state is GetAllTablesState) {
+                if (state.tables != null) {
+                  listAllTables = state.tables;
+                }
+              }
+              if (state is ClickCreateTableState) {
+                isCreate = state.isClicked ?? false;
+              }
+              if (state is CancleCreateTableState) {
+                isCreate = state.isClicked ?? true;
                 _clear(init: true);
               }
-            }
-            return _body();
-          },
+              if (state is SaveTableOnRemoteDbState) {
+                if (state.error != null) {
+                  _showMsg(context, state.error!);
+                }
+                if (state.msg != null) {
+                  _showMsg(context, state.msg!);
+                  _clear(init: true);
+                  context.read<DbRemoteBloc>().add(GetAllTablesEvent());
+                }
+              }
+              if (state is TruncateTableState) {
+                if (state.msg != null) {
+                  _showMsg(context, state.msg!);
+                }
+              }
+              if (state is DeleteTableState) {
+                if (state.msg != null) {
+                  _showMsg(context, state.msg!).whenComplete(() {
+                    if (!context.mounted) return;
+                    context.read<DbRemoteBloc>().add(GetAllTablesEvent());
+                  });
+                }
+              }
+              if (state is ShowTableInfoState) {
+                if (state.msg != null) {
+                  _showMsg(context, state.msg!);
+                }
+                if (state.data != null) {
+                  _allColumnsInOneTable(
+                      state.data, context, state.tableName ?? '');
+                }
+              }
+              if (state is DeleteOneColumnState) {
+                if (state.msg != null) {
+                  _showMsg(context, state.msg!);
+                }
+              }
+              return _body();
+            },
+          ),
         ),
       ),
     );
   }
 
+// main
   Widget _body() {
     return SingleChildScrollView(
       child: Column(
@@ -131,7 +164,8 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
             radius: 25,
             child: AppBtn.iconBtn(
               onPressed: () {
-                HelperMethods.popMethod(context, route: const ControlRoute());
+                HelperMethods.popMethod(context,
+                    rePlace: true, route: const ControlRoute());
               },
               icon: Icons.exit_to_app_outlined,
               size: 35,
@@ -142,19 +176,195 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
     );
   }
 
-// get all atble from remote that exist
+// get all table from remote db that exist
   Widget _getAllTables() {
     return listAllTables != null
-        ? SizedBox(
-            height: 200,
-            child: ListView.builder(
-              itemCount: listAllTables!.length,
-              itemBuilder: (_, i) {
-                return Text(listAllTables![i].toString());
-              },
+        ? Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    child: AppText.normalText(
+                      'Number of tables that exist in your db is ${listAllTables?.length ?? 0}',
+                    ),
+                  ),
+                ),
+                _headerGetAllTable(),
+                _bodyListOfGetTable(),
+              ],
             ),
           )
         : const SizedBox();
+  }
+
+  Widget _headerGetAllTable() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 12, right: 12),
+      child: Table(
+        border: TableBorder.all(borderRadius: BorderRadius.circular(8.0)),
+        children: [
+          TableRow(
+            decoration: const BoxDecoration(color: Colors.white),
+            children: [
+              TableCell(child: Center(child: AppText.normalText('Table Name'))),
+              TableCell(child: Center(child: AppText.normalText('Table Info'))),
+              TableCell(
+                  child: Center(child: AppText.normalText('Truncet Table'))),
+              TableCell(
+                  child: Center(child: AppText.normalText('Delete Table'))),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _bodyListOfGetTable() {
+    return SizedBox(
+      height: 200,
+      child: ListView.builder(
+        itemCount: listAllTables!.length,
+        itemBuilder: (_, i) {
+          Color rowColor = i % 2 == 0 ? Colors.grey[300]! : Colors.white;
+          return Padding(
+            padding: const EdgeInsets.only(right: 12.0, left: 12.0),
+            child: Table(
+              border: TableBorder.all(borderRadius: BorderRadius.circular(8.0)),
+              children: [
+                TableRow(
+                  decoration: BoxDecoration(color: rowColor),
+                  children: [
+                    TableCell(
+                        child: Center(
+                            child: AppText.normalText(
+                                listAllTables?[i] ?? 'null'))),
+                    TableCell(
+                        child: AppBtn.iconBtn(
+                            onPressed: () => _showTableInfo(listAllTables?[i]),
+                            icon: Icons.remove_red_eye_outlined)),
+                    TableCell(
+                        child: AppBtn.iconBtn(
+                            onPressed: () {
+                              _beforTranctTable(i);
+                            },
+                            icon: Icons.cleaning_services_rounded)),
+                    TableCell(
+                        child: AppBtn.iconBtn(
+                            onPressed: () => _beforDeleteTable(i),
+                            icon: Icons.delete_forever,
+                            color: Colors.red)),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Future _allColumnsInOneTable(
+      List? data, BuildContext context, String tableName) async {
+    Future.delayed(const Duration(seconds: 1)).whenComplete(
+      () {
+        if (!context.mounted) return;
+        AppDialog.dialogBuilder(
+          context: context,
+          title: 'Columns of \n Table $tableName',
+          content: '------------',
+          widget: data != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: UiResponsive.globalMedia(context: context) / 2,
+                        child: Table(
+                          border: TableBorder.all(
+                              borderRadius: BorderRadius.circular(8.0)),
+                          children: [
+                            TableRow(
+                              decoration:
+                                  const BoxDecoration(color: Colors.white),
+                              children: [
+                                TableCell(
+                                    child: Center(
+                                        child:
+                                            AppText.normalText('Name & No'))),
+                                TableCell(
+                                    child: Center(
+                                        child: AppText.normalText('Type'))),
+                                TableCell(
+                                    child: Center(
+                                        child: AppText.normalText('Null'))),
+                                TableCell(
+                                    child: Center(
+                                        child: AppText.normalText(
+                                            'Delete Column'))),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 200,
+                        width: UiResponsive.globalMedia(context: context) / 2,
+                        child: ListView.builder(
+                          padding: EdgeInsets.zero,
+                          itemCount: data.length,
+                          itemBuilder: (_, i) {
+                            Color rowColor =
+                                i % 2 == 0 ? Colors.grey[300]! : Colors.white;
+                            return Table(
+                              border: TableBorder.all(
+                                  borderRadius: BorderRadius.circular(8.0)),
+                              children: [
+                                TableRow(
+                                  decoration: BoxDecoration(color: rowColor),
+                                  children: [
+                                    TableCell(
+                                        child: Center(
+                                            child: AppText.normalText(
+                                                'No:${i + 1} - ${data[i]['name']}'))),
+                                    TableCell(
+                                        child: Center(
+                                            child: AppText.normalText(
+                                                '${data[i]['type']}'))),
+                                    TableCell(
+                                        child: Center(
+                                            child: AppText.normalText(
+                                                '${data[i]['null']}'))),
+                                    TableCell(
+                                      child: AppBtn.iconBtn(
+                                          icon: Icons.delete_forever,
+                                          onPressed: () {
+                                            _beforDelOneColumn(tableName,
+                                                data[i]['name'], context);
+                                          }),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 20)
+                    ],
+                  ),
+                )
+              : AppIndicators.loadingCircularIndicator,
+          txtPop: 'okay',
+          onPressedPop: () {
+            HelperMethods.popMethod(context);
+          },
+        );
+      },
+    );
   }
 
 // to create new table
@@ -453,8 +663,8 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
         tableName: tableName.text, listColumn: listCreateColumns));
   }
 
-  void _showMsg(BuildContext context, String txt) {
-    Future.delayed(const Duration(seconds: 1)).whenComplete(
+  Future _showMsg(BuildContext context, String txt) async {
+    Future.delayed(const Duration(milliseconds: 500)).whenComplete(
       () {
         if (!context.mounted) return;
         AppDialog.dialogBuilder(
@@ -483,5 +693,72 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
     autoIncrement.text = 'false';
     primaryKey.text = 'false';
     forginKey.text = 'false';
+  }
+
+  void _beforTranctTable(int i) {
+    AppDialog.dialogBuilder(
+      context: context,
+      title: 'Danger Area',
+      bgColor: const Color.fromARGB(255, 215, 161, 157),
+      content:
+          'By Click on clear btn you are going to delete all data on this table : ${listAllTables?[i] ?? 'null'}',
+      txtPop: 'Cancel',
+      secondBtn: true,
+      txtSecond: 'Clear',
+      onPressedPop: () => HelperMethods.popMethod(context),
+      onPressedSecond: () {
+        HelperMethods.popMethod(context);
+        if (listAllTables == null) return;
+        context.read<DbRemoteBloc>().add(TruncateTableEvent(listAllTables![i]));
+      },
+    );
+  }
+
+  void _beforDeleteTable(int i) {
+    AppDialog.dialogBuilder(
+      context: context,
+      title: 'Danger Area',
+      bgColor: const Color.fromARGB(255, 234, 186, 182),
+      content:
+          'By Click on Delete btn you are going to delete this table : ${listAllTables?[i] ?? 'null'}',
+      txtPop: 'Cancel',
+      secondBtn: true,
+      txtSecond: 'Delete',
+      onPressedPop: () => HelperMethods.popMethod(context),
+      onPressedSecond: () {
+        HelperMethods.popMethod(context);
+        if (listAllTables == null) return;
+        context.read<DbRemoteBloc>().add(DeleteTableEvent(listAllTables![i]));
+      },
+    );
+  }
+
+  void _showTableInfo(String tableName) {
+    context.read<DbRemoteBloc>().add(ShowTableInfoEvent(tableName));
+  }
+
+  void _beforDelOneColumn(
+      String tableName, String colName, BuildContext context) {
+    AppDialog.dialogBuilder(
+      context: context,
+      title: 'Danger Area',
+      bgColor: const Color.fromARGB(255, 234, 186, 182),
+      content:
+          'By Click on Delete btn you are going to delete one Column from  the table : $tableName',
+      txtPop: 'Cancel',
+      secondBtn: true,
+      txtSecond: 'Delete',
+      onPressedPop: () => HelperMethods.popMethod(context),
+      onPressedSecond: () async {
+        HelperMethods.popMethod(context);
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (!context.mounted) return;
+        HelperMethods.popMethod(context);
+
+        context
+            .read<DbRemoteBloc>()
+            .add(DeleteOneColumnEvent(tableName, colName));
+      },
+    );
   }
 }

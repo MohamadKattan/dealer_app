@@ -19,7 +19,7 @@ class UserController {
       } else if (result.data != null) {
         final map = jsonDecode(result.data) as Map<String, dynamic>;
         User user = User.fromMap(map);
-        _userProvider(user);
+        await _userProvider(user);
         return ResultController(data: true, status: ResultsLevel.success);
       } else {
         return ResultController(data: false, status: ResultsLevel.success);
@@ -57,7 +57,7 @@ class UserController {
     }
   }
 
-  _userProvider(User user) {
+  Future<void> _userProvider(User user) async {
     _user = user;
     AppGetter.per = _user.per ?? 'null per';
     AppGetter.usertoken = _user.token ?? 'null token';

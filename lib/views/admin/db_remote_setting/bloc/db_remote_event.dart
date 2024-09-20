@@ -17,3 +17,24 @@ class SaveTableOnRemoteDbEvent extends DbRemoteEvent {
 }
 
 class GetAllTablesEvent extends DbRemoteEvent {}
+
+class TruncateTableEvent extends DbRemoteEvent {
+  String tableName;
+  TruncateTableEvent(this.tableName);
+}
+
+class DeleteTableEvent extends DbRemoteEvent {
+  String? tableName;
+  DeleteTableEvent(this.tableName);
+}
+
+class ShowTableInfoEvent extends DbRemoteEvent {
+  String tableName;
+  ShowTableInfoEvent(this.tableName);
+}
+
+class DeleteOneColumnEvent extends DbRemoteEvent {
+  String tableName;
+  String columnName;
+  DeleteOneColumnEvent(this.tableName, this.columnName);
+}

@@ -82,6 +82,8 @@ class LoginBloc extends Cubit<int> {
           AppGetter.appLogger.showLogger(LogLevel.warning, '${resLocal.error}');
           emit(LoginStateLavel.failLogin.state);
         } else {
+          // final res = await AppGetter.userController.getUserFromLocal();
+          // print(res.data);
           name.clear();
           passWord.clear();
           emit(LoginStateLavel.successLogin.state);

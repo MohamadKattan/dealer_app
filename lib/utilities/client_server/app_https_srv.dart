@@ -6,10 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AppHttpsSrv {
   String baseUrl = dotenv.get('API_URL', fallback: 'sane-default');
   Map<String, String> normalHeader = {'Content-Type': 'application/json'};
-  Map<String, String> authHeader = {
-    'Content-Type': 'application/json',
-    'Authorization': AppGetter.usertoken ?? 'null'
-  };
   final dio = Dio(BaseOptions(
       sendTimeout: const Duration(milliseconds: 5000),
       receiveTimeout: const Duration(milliseconds: 5000),
@@ -20,7 +16,10 @@ class AppHttpsSrv {
       dio.interceptors.add(LogInterceptor(responseBody: true));
       dio.options.baseUrl = baseUrl;
       if (isAuth) {
-        dio.options.headers = authHeader;
+        dio.options.headers = {
+          'Content-Type': 'application/json',
+          'Authorization': AppGetter.usertoken ?? ''
+        };
       }
       final response = await dio.get(root);
       if (response.statusCode != null &&
@@ -41,7 +40,10 @@ class AppHttpsSrv {
       // dio.interceptors.add(LogInterceptor(responseBody: true));
       dio.options.baseUrl = baseUrl;
       if (isAuth) {
-        dio.options.headers = authHeader;
+        dio.options.headers = {
+          'Content-Type': 'application/json',
+          'Authorization': AppGetter.usertoken ?? ''
+        };
       }
       final response = await dio.post(url, data: data);
       if (response.statusCode != null &&
@@ -73,14 +75,22 @@ class AppHttpsSrv {
     }
   }
 
-  Future<ResultController> deleteData(String url, Object data) async {
+  Future<ResultController> deleteData(String url, Object data,
+      {bool isAuth = false}) async {
     try {
       dio.interceptors.add(LogInterceptor(responseBody: true));
       dio.options.baseUrl = baseUrl;
+      if (isAuth) {
+        dio.options.headers = {
+          'Content-Type': 'application/json',
+          'Authorization': AppGetter.usertoken ?? ''
+        };
+      }
       Response response = await dio.delete(url, data: data);
       if (response.statusCode != null &&
           (response.statusCode! < 200 || response.statusCode! >= 300)) {
-        return ResultController(data: response.data, status: ResultsLevel.fail);
+        return ResultController(
+            data: response.data, status: ResultsLevel.fail, error: 'error');
       }
       return ResultController(
           data: response.data, status: ResultsLevel.success);

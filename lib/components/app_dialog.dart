@@ -10,6 +10,8 @@ class AppDialog {
       Function()? onPressedPop,
       required String txtPop,
       bool? secondBtn,
+      Color? bgColor,
+      Widget? widget,
       Function()? onPressedSecond,
       String? txtSecond}) {
     return showDialog<void>(
@@ -18,9 +20,12 @@ class AppDialog {
         return SizedBox(
           width: 200,
           child: AlertDialog(
-            title: AppText.normalText(title),
+            backgroundColor: bgColor,
+            title: AppText.normalText(title,
+                fontSize: 18, fontWeight: FontWeight.bold),
             content: AppText.normalText(content),
             actions: <Widget>[
+              if (widget != null) widget,
               AppBtn.elevBtn(
                   onPressed: onPressedPop, txt: txtPop, bgColor: Colors.white),
               if (secondBtn ?? false)

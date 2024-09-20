@@ -17,22 +17,34 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       if (AppGetter.per != null) {
         emit(GetDataAndConfigState(isUser: true));
       } else {
+        final token = AppGetter.usertoken;
         final result = await AppGetter.userController.getUserFromLocal();
-        if (result.error != null) {
-          emit(GetDataAndConfigState(isUser: false));
-          AppGetter.appLogger
-              .showLogger(LogLevel.error, result.error ?? 'error');
-        }
-        if (result.data == true) {
-          emit(GetDataAndConfigState(isUser: true));
-          AppGetter.appLogger.showLogger(
-              LogLevel.info, 'user in local ${result.data} nav to home screen');
-        }
-        if (result.data == false) {
+        if (token == null) {
           AppGetter.appLogger.showLogger(
               LogLevel.info, 'No user in local push ==> to login screen');
           emit(GetDataAndConfigState(isUser: false));
         }
+
+        if (token != null && token.length > 6) {
+          emit(GetDataAndConfigState(isUser: true));
+          AppGetter.appLogger.showLogger(
+              LogLevel.info, 'user in local ${result.data} nav to home screen');
+        }
+        // if (result.error != null) {
+        //   emit(GetDataAndConfigState(isUser: false));
+        //   AppGetter.appLogger
+        //       .showLogger(LogLevel.error, result.error ?? 'error');
+        // }
+        // if (result.data == true) {
+        //   emit(GetDataAndConfigState(isUser: true));
+        //   AppGetter.appLogger.showLogger(
+        //       LogLevel.info, 'user in local ${result.data} nav to home screen');
+        // }
+        // if (result.data == false) {
+        //   AppGetter.appLogger.showLogger(
+        //       LogLevel.info, 'No user in local push ==> to login screen');
+        //   emit(GetDataAndConfigState(isUser: false));
+        // }
       }
     } catch (e) {
       AppGetter.appLogger.showLogger(LogLevel.error, e.toString());

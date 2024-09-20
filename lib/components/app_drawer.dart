@@ -61,7 +61,7 @@ class AppDrawer {
                           textAlign: TextAlign.start,
                           AppLocalizations.of(context)!.controlPanel),
                       onTap: () {
-                        router.push(const ControlRoute());
+                        router.replace(const ControlRoute());
                       },
                     ),
                   ListTile(

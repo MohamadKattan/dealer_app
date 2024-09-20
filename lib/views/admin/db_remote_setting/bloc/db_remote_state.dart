@@ -32,3 +32,25 @@ class GetAllTablesState extends DbRemoteState {
   List? tables;
   GetAllTablesState({this.error, this.tables});
 }
+
+class TruncateTableState extends DbRemoteState {
+  String? msg;
+  TruncateTableState({this.msg});
+}
+
+class DeleteTableState extends DbRemoteState {
+  String? msg;
+  DeleteTableState({this.msg});
+}
+
+class ShowTableInfoState extends DbRemoteState {
+  String? msg;
+  String? tableName;
+  List? data;
+  ShowTableInfoState({this.tableName, this.msg, this.data});
+}
+
+class DeleteOneColumnState extends DbRemoteState {
+  String? msg;
+  DeleteOneColumnState({this.msg});
+}
