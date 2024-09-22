@@ -38,3 +38,9 @@ class DeleteOneColumnEvent extends DbRemoteEvent {
   String columnName;
   DeleteOneColumnEvent(this.tableName, this.columnName);
 }
+
+class EditTableEvent extends DbRemoteEvent {
+  String tableName;
+  Object oneColum;
+  EditTableEvent(this.tableName, this.oneColum);
+}

@@ -59,10 +59,17 @@ class AppHttpsSrv {
     }
   }
 
-  Future<ResultController> putData(String url, Object data) async {
+  Future<ResultController> putData(String url, Object data,
+      {bool isAuth = false}) async {
     try {
       dio.interceptors.add(LogInterceptor(responseBody: true));
       dio.options.baseUrl = baseUrl;
+      if (isAuth) {
+        dio.options.headers = {
+          'Content-Type': 'application/json',
+          'Authorization': AppGetter.usertoken ?? ''
+        };
+      }
       Response response = await dio.put(url, data: data);
       if (response.statusCode != null &&
           (response.statusCode! < 200 || response.statusCode! >= 300)) {

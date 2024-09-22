@@ -79,9 +79,11 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
               if (state is SaveTableOnRemoteDbState) {
                 if (state.error != null) {
                   _showMsg(context, state.error!);
+                  state.error = null;
                 }
                 if (state.msg != null) {
                   _showMsg(context, state.msg!);
+                  state.msg = null;
                   _clear(init: true);
                   context.read<DbRemoteBloc>().add(GetAllTablesEvent());
                 }
@@ -89,6 +91,7 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
               if (state is TruncateTableState) {
                 if (state.msg != null) {
                   _showMsg(context, state.msg!);
+                  state.msg = null;
                 }
               }
               if (state is DeleteTableState) {
@@ -97,20 +100,32 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
                     if (!context.mounted) return;
                     context.read<DbRemoteBloc>().add(GetAllTablesEvent());
                   });
+                  state.msg = null;
                 }
               }
               if (state is ShowTableInfoState) {
                 if (state.msg != null) {
                   _showMsg(context, state.msg!);
+                  state.msg = null;
                 }
                 if (state.data != null) {
                   _allColumnsInOneTable(
                       state.data, context, state.tableName ?? '');
+                  state.data = null;
                 }
               }
               if (state is DeleteOneColumnState) {
                 if (state.msg != null) {
                   _showMsg(context, state.msg!);
+                  state.msg = null;
+                }
+              }
+
+              if (state is EditTableState) {
+                if (state.msg != null) {
+                  _showMsg(context, state.msg!);
+                  state.msg = null;
+                  _clear(init: true);
                 }
               }
               return _body();
@@ -211,6 +226,7 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
             children: [
               TableCell(child: Center(child: AppText.normalText('Table Name'))),
               TableCell(child: Center(child: AppText.normalText('Table Info'))),
+              TableCell(child: Center(child: AppText.normalText('Edite'))),
               TableCell(
                   child: Center(child: AppText.normalText('Truncet Table'))),
               TableCell(
@@ -248,6 +264,12 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
                     TableCell(
                         child: AppBtn.iconBtn(
                             onPressed: () {
+                              _editTable(listAllTables?[i], context);
+                            },
+                            icon: Icons.edit)),
+                    TableCell(
+                        child: AppBtn.iconBtn(
+                            onPressed: () {
                               _beforTranctTable(i);
                             },
                             icon: Icons.cleaning_services_rounded)),
@@ -273,7 +295,7 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
         if (!context.mounted) return;
         AppDialog.dialogBuilder(
           context: context,
-          title: 'Columns of \n Table $tableName',
+          title: 'Columns In \n Table $tableName',
           content: '------------',
           widget: data != null
               ? Center(
@@ -353,7 +375,6 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
                           },
                         ),
                       ),
-                      const SizedBox(height: 20)
                     ],
                   ),
                 )
@@ -413,8 +434,7 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
                                 onPressedPop: () =>
                                     HelperMethods.popMethod(context),
                                 secondBtn: true,
-                                onPressedSecond: () =>
-                                    _saveTableOnRemoteDb(context),
+                                onPressedSecond: () => _saveToRemoteDb(context),
                                 txtSecond: 'create');
                           },
                           icon: Icons.save,
@@ -631,7 +651,7 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
   }
 
 // methods
-  void _addAndclear() async {
+  Future _addAndclear() async {
     if (columnName.text.isEmpty) {
       errorColumn = 'Column name is empty';
       await Future.delayed(const Duration(seconds: 1));
@@ -647,7 +667,6 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
       "primaryKey": primaryKey.text == 'false' ? false : true,
       "foreignKey": forginKey.text == 'false' ? false : true,
     };
-
     listCreateColumns.add(newColoumn);
     _clear();
   }
@@ -657,7 +676,7 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
     context.read<DbRemoteBloc>().add(RemoveOneColumnEvent());
   }
 
-  void _saveTableOnRemoteDb(BuildContext context) {
+  void _saveToRemoteDb(BuildContext context) {
     HelperMethods.popMethod(context);
     context.read<DbRemoteBloc>().add(SaveTableOnRemoteDbEvent(
         tableName: tableName.text, listColumn: listCreateColumns));
@@ -758,6 +777,28 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
         context
             .read<DbRemoteBloc>()
             .add(DeleteOneColumnEvent(tableName, colName));
+      },
+    );
+  }
+
+  void _editTable(String tableName, BuildContext context) {
+    AppDialog.dialogBuilder(
+      context: context,
+      title: 'Add New Column to \n Table $tableName',
+      content: '------------',
+      widget: _newColumn(),
+      onPressedPop: () => HelperMethods.popMethod(context),
+      txtPop: 'Cancel',
+      secondBtn: true,
+      txtSecond: 'Add',
+      onPressedSecond: () async {
+        await _addAndclear();
+
+        if (!context.mounted) return;
+        HelperMethods.popMethod(context);
+        context
+            .read<DbRemoteBloc>()
+            .add(EditTableEvent(tableName, listCreateColumns[0]));
       },
     );
   }

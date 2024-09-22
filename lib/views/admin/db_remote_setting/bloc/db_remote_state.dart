@@ -54,3 +54,8 @@ class DeleteOneColumnState extends DbRemoteState {
   String? msg;
   DeleteOneColumnState({this.msg});
 }
+
+class EditTableState extends DbRemoteState {
+  String? msg;
+  EditTableState({this.msg});
+}

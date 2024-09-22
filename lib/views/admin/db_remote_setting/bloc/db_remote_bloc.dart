@@ -15,6 +15,7 @@ enum DbRemoteSubUrl {
   truncate('truncate'),
   delTable('dropTable'),
   showColumns('showColumns'),
+  editTable('alterTable'),
   dropOneColumn('dropColumn');
 
   const DbRemoteSubUrl(this.subRoute);
@@ -34,6 +35,7 @@ class DbRemoteBloc extends Bloc<DbRemoteEvent, DbRemoteState> {
     on<DeleteTableEvent>(_deleteTable);
     on<ShowTableInfoEvent>(_showTableInfo);
     on<DeleteOneColumnEvent>(_deleteOneColumn);
+    on<EditTableEvent>(_editeTable);
   }
 
   _clickCreateNewTablebTN(
@@ -186,6 +188,25 @@ class DbRemoteBloc extends Bloc<DbRemoteEvent, DbRemoteState> {
     } catch (e) {
       AppGetter.appLogger.showLogger(LogLevel.error, e.toString());
       emit(DeleteOneColumnState(msg: e.toString()));
+    }
+  }
+
+  _editeTable(EditTableEvent event, Emitter<DbRemoteState> emit) async {
+    try {
+      emit(LoudingState());
+      final data = DbRemoteModel(
+          tableName: event.tableName, oneColumObj: event.oneColum);
+      final body = data.toJson(TypeJson.editTable);
+      final res = await AppGetter.httpSrv
+          .putData(DbRemoteSubUrl.editTable.subRoute, body);
+      final decodeData = jsonDecode(res.data);
+      if (res.status == ResultsLevel.fail) {
+        AppGetter.appLogger.showLogger(LogLevel.error, decodeData['msg']);
+      }
+      emit(EditTableState(msg: decodeData['msg']));
+    } catch (e) {
+      AppGetter.appLogger.showLogger(LogLevel.error, e.toString());
+      emit(EditTableState(msg: e.toString()));
     }
   }
 }

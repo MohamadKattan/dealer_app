@@ -26,13 +26,27 @@ class AppDialog {
             content: AppText.normalText(content),
             actions: <Widget>[
               if (widget != null) widget,
-              AppBtn.elevBtn(
-                  onPressed: onPressedPop, txt: txtPop, bgColor: Colors.white),
-              if (secondBtn ?? false)
-                AppBtn.elevBtn(
-                    onPressed: onPressedSecond,
-                    txt: txtSecond ?? '',
-                    bgColor: Colors.white)
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: AppBtn.elevBtn(
+                      onPressed: onPressedPop,
+                      txt: txtPop,
+                      bgColor: Colors.white),
+                ),
+                if (secondBtn ?? false)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: AppBtn.elevBtn(
+                        onPressed: onPressedSecond,
+                        txt: txtSecond ?? '',
+                        bgColor: Colors.white),
+                  )
+              ])
             ],
           ),
         );
