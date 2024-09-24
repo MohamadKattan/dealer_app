@@ -145,9 +145,7 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
           _header(),
           const SizedBox(height: 20),
           _getAllTables(),
-          const SizedBox(height: 20),
           _startCreateNewTable(),
-          const SizedBox(height: 20),
           _listOfColumnBeforSave(),
         ],
       ),
@@ -203,7 +201,7 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Card(
                     child: AppText.normalText(
-                      'Number of tables that exist in your db is ${listAllTables?.length ?? 0}',
+                      'Number of tables\nThat exist in your db is ${listAllTables?.length ?? 0}',
                     ),
                   ),
                 ),
@@ -240,7 +238,7 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
 
   Widget _bodyListOfGetTable() {
     return SizedBox(
-      height: 200,
+      height: listAllTables!.length * 50.0,
       child: ListView.builder(
         itemCount: listAllTables!.length,
         itemBuilder: (_, i) {
@@ -333,7 +331,7 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: 200,
+                        height: data.length * 50.0,
                         width: UiResponsive.globalMedia(context: context) / 2,
                         child: ListView.builder(
                           padding: EdgeInsets.zero,
@@ -430,12 +428,12 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
                                 title: 'SAVE New TABLE',
                                 content:
                                     'BY CLICK ON Greate BTN YOUR ARE GOING TO GREATE NEW TABLE ON YOUR REMOTE DATABASE',
-                                txtPop: 'CANCEL',
+                                txtPop: 'Cancel',
                                 onPressedPop: () =>
                                     HelperMethods.popMethod(context),
                                 secondBtn: true,
                                 onPressedSecond: () => _saveToRemoteDb(context),
-                                txtSecond: 'create');
+                                txtSecond: 'Create');
                           },
                           icon: Icons.save,
                           size: 30)
@@ -493,44 +491,69 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
   }
 
   Widget _newColumn() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
+    return Builder(builder: (context) {
+      double width = UiResponsive.globalMedia(context: context);
+      return Center(
+        child: Column(
           children: [
-            Expanded(
-              child: AppTextField.customField(
-                  controller: columnName,
-                  labelText: 'Column Name',
-                  errorText: errorColumn,
-                  hintText: 'Enter column Name'),
+            Row(
+              children: [
+                Expanded(
+                  child: AppTextField.customField(
+                      controller: columnName,
+                      labelText: 'Column Name',
+                      errorText: errorColumn,
+                      hintText: 'Enter column Name'),
+                ),
+                Expanded(
+                  child: AppTextField.customField(
+                      controller: defaultValuse,
+                      labelText: 'default value',
+                      hintText: 'default value if exsist'),
+                ),
+              ],
             ),
-            Expanded(
-              child: AppTextField.customField(
-                  controller: defaultValuse,
-                  labelText: 'default value',
-                  hintText: 'default value if exsist'),
-            ),
+            if (width > ScreenSize.isMobile.width)
+              Row(
+                children: [
+                  AppDropMenue.menueDataType(controller: dataType),
+                  AppDropMenue.dropDownBool(
+                      controller: notNull, label: DropLable.notNull.label),
+                  AppDropMenue.dropDownBool(
+                      controller: autoIncrement,
+                      label: DropLable.autoIncrement.label),
+                  AppDropMenue.dropDownBool(
+                      controller: primaryKey,
+                      label: DropLable.primaryKey.label),
+                  AppDropMenue.dropDownBool(
+                      controller: forginKey, label: DropLable.forginKey.label),
+                ],
+              ),
+            if (width <= ScreenSize.isMobile.width)
+              Column(
+                children: [
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    AppDropMenue.menueDataType(controller: dataType),
+                    AppDropMenue.dropDownBool(
+                        controller: notNull, label: DropLable.notNull.label),
+                  ]),
+                  Row(children: [
+                    AppDropMenue.dropDownBool(
+                        controller: autoIncrement,
+                        label: DropLable.autoIncrement.label),
+                    AppDropMenue.dropDownBool(
+                        controller: primaryKey,
+                        label: DropLable.primaryKey.label),
+                    AppDropMenue.dropDownBool(
+                        controller: forginKey,
+                        label: DropLable.forginKey.label),
+                  ])
+                ],
+              )
           ],
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            AppDropMenue.menueDataType(controller: dataType),
-            AppDropMenue.dropDownBool(
-                controller: notNull, label: DropLable.notNull.label),
-            AppDropMenue.dropDownBool(
-                controller: autoIncrement,
-                label: DropLable.autoIncrement.label),
-            AppDropMenue.dropDownBool(
-                controller: primaryKey, label: DropLable.primaryKey.label),
-            AppDropMenue.dropDownBool(
-                controller: forginKey, label: DropLable.forginKey.label),
-          ],
-        ),
-      ],
-    );
+      );
+    });
   }
 
 // list of columns befor save in remote database

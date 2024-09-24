@@ -17,7 +17,7 @@ class AppBtn {
       onLongPress: onLongPress,
       style: ButtonStyle(
           backgroundColor: WidgetStateProperty.all<Color?>(bgColor)),
-      child: AppText.normalText(txt, fontSize: 18),
+      child: AppText.normalText(txt),
     );
   }
 

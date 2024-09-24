@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
       child: BlocBuilder<ThemeBloc, ThemeData>(
         builder: (_, theme) {
           return MaterialApp.router(
-            title: 'Dealer System Mangment',
+            title: 'Business System Mangment',
             debugShowCheckedModeBanner: false,
             theme: theme,
             routerConfig: _appRouter.config(),

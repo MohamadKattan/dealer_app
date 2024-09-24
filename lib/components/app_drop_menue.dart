@@ -37,44 +37,52 @@ enum BoolDropvAL {
 
 class AppDropMenue {
   static Widget menueDataType({required TextEditingController controller}) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: DropdownMenu<DropVALDataType>(
-        initialSelection: DropVALDataType.char,
-        controller: controller,
-        requestFocusOnTap: true,
-        label: Text(DropLable.dataType.label),
-        onSelected: (DropVALDataType? val) {},
-        dropdownMenuEntries: DropVALDataType.values
-            .map<DropdownMenuEntry<DropVALDataType>>((DropVALDataType val) {
-          return DropdownMenuEntry<DropVALDataType>(
-            value: val,
-            label: val.val,
-            enabled: true,
-          );
-        }).toList(),
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: DropdownMenu<DropVALDataType>(
+            initialSelection: DropVALDataType.char,
+            controller: controller,
+            requestFocusOnTap: true,
+            label: Text(DropLable.dataType.label),
+            onSelected: (DropVALDataType? val) {},
+            dropdownMenuEntries: DropVALDataType.values
+                .map<DropdownMenuEntry<DropVALDataType>>((DropVALDataType val) {
+              return DropdownMenuEntry<DropVALDataType>(
+                value: val,
+                label: val.val,
+                enabled: true,
+              );
+            }).toList(),
+          ),
+        ),
       ),
     );
   }
 
   static Widget dropDownBool(
       {required TextEditingController controller, required String label}) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: DropdownMenu<BoolDropvAL>(
-        initialSelection: BoolDropvAL.isFalse,
-        controller: controller,
-        requestFocusOnTap: true,
-        label: AppText.normalText(label),
-        onSelected: (BoolDropvAL? val) {},
-        dropdownMenuEntries: BoolDropvAL.values
-            .map<DropdownMenuEntry<BoolDropvAL>>((BoolDropvAL val) {
-          return DropdownMenuEntry<BoolDropvAL>(
-            value: val,
-            label: val.val.toString(),
-            enabled: true,
-          );
-        }).toList(),
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: DropdownMenu<BoolDropvAL>(
+            initialSelection: BoolDropvAL.isFalse,
+            controller: controller,
+            requestFocusOnTap: true,
+            label: AppText.normalText(label),
+            onSelected: (BoolDropvAL? val) {},
+            dropdownMenuEntries: BoolDropvAL.values
+                .map<DropdownMenuEntry<BoolDropvAL>>((BoolDropvAL val) {
+              return DropdownMenuEntry<BoolDropvAL>(
+                value: val,
+                label: val.val.toString(),
+                enabled: true,
+              );
+            }).toList(),
+          ),
+        ),
       ),
     );
   }
