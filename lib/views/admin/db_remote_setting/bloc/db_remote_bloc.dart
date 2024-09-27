@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:dealer/models/db_remote_model.dart';
 import 'package:dealer/utilities/dev_helper/app_getter.dart';
 import 'package:dealer/utilities/dev_helper/logger_controller.dart';
-import 'package:dealer/utilities/dyanmic_data_result/results_controller.dart';
+import 'package:dealer/models/results_controller.dart';
 import 'package:dealer/views/admin/db_remote_setting/bloc/db_remote_event.dart';
 import 'package:dealer/views/admin/db_remote_setting/bloc/db_remote_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +16,7 @@ enum DbRemoteSubUrl {
   delTable('dropTable'),
   showColumns('showColumns'),
   editTable('alterTable'),
+  editColumn('alterColumn'),
   dropOneColumn('dropColumn');
 
   const DbRemoteSubUrl(this.subRoute);
@@ -35,7 +36,8 @@ class DbRemoteBloc extends Bloc<DbRemoteEvent, DbRemoteState> {
     on<DeleteTableEvent>(_deleteTable);
     on<ShowTableInfoEvent>(_showTableInfo);
     on<DeleteOneColumnEvent>(_deleteOneColumn);
-    on<EditTableEvent>(_editeTable);
+    on<EditTableOrColumnEvent>(_editeTableOrColumn);
+    on<DevOptionsDbEvent>(_devOptionsControll);
   }
 
   _clickCreateNewTablebTN(
@@ -191,19 +193,41 @@ class DbRemoteBloc extends Bloc<DbRemoteEvent, DbRemoteState> {
     }
   }
 
-  _editeTable(EditTableEvent event, Emitter<DbRemoteState> emit) async {
+  _editeTableOrColumn(
+      EditTableOrColumnEvent event, Emitter<DbRemoteState> emit) async {
     try {
       emit(LoudingState());
       final data = DbRemoteModel(
           tableName: event.tableName, oneColumObj: event.oneColum);
       final body = data.toJson(TypeJson.editTable);
-      final res = await AppGetter.httpSrv
-          .putData(DbRemoteSubUrl.editTable.subRoute, body);
+      final url = event.isEditTable
+          ? DbRemoteSubUrl.editTable.subRoute
+          : DbRemoteSubUrl.editColumn.subRoute;
+      final res = await AppGetter.httpSrv.putData(url, body);
       final decodeData = jsonDecode(res.data);
       if (res.status == ResultsLevel.fail) {
         AppGetter.appLogger.showLogger(LogLevel.error, decodeData['msg']);
       }
       emit(EditTableState(msg: decodeData['msg']));
+    } catch (e) {
+      AppGetter.appLogger.showLogger(LogLevel.error, e.toString());
+      emit(EditTableState(msg: e.toString()));
+    }
+  }
+
+  _devOptionsControll(
+      DevOptionsDbEvent event, Emitter<DbRemoteState> emit) async {
+    try {
+      emit(LoudingState());
+      final body = {"pass": event.pass, "text": event.text};
+      final res =
+          await AppGetter.httpSrv.postData(event.url, body, isAuth: true);
+      final deCodeData = jsonDecode(res.data);
+
+      if (res.status == ResultsLevel.fail) {
+        AppGetter.appLogger.showLogger(LogLevel.error, deCodeData['msg']);
+      }
+      emit(EditTableState(msg: deCodeData['msg']));
     } catch (e) {
       AppGetter.appLogger.showLogger(LogLevel.error, e.toString());
       emit(EditTableState(msg: e.toString()));

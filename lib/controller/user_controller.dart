@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:dealer/local_db/secure_db_controller.dart';
 import 'package:dealer/models/user_model.dart';
 import 'package:dealer/utilities/dev_helper/app_getter.dart';
-import 'package:dealer/utilities/dyanmic_data_result/results_controller.dart';
+import 'package:dealer/models/results_controller.dart';
 
 class UserController {
   User _user = User();
@@ -36,6 +36,7 @@ class UserController {
         'user_name': user.userName,
         'per': user.per,
         'user_id': user.userId,
+        'address': user.address ?? '',
         'token': user.token
       });
       final resultSet = await AppGetter.localeSecureStorag

@@ -1,7 +1,7 @@
 // this class ineclode hive locale db
 import 'package:dealer/utilities/dev_helper/app_getter.dart';
 import 'package:dealer/utilities/dev_helper/logger_controller.dart';
-import 'package:dealer/utilities/dyanmic_data_result/results_controller.dart';
+import 'package:dealer/models/results_controller.dart';
 import 'package:hive/hive.dart';
 
 enum BoxesLevel {

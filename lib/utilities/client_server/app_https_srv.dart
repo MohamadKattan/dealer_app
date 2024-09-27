@@ -1,5 +1,5 @@
 import 'package:dealer/utilities/dev_helper/app_getter.dart';
-import 'package:dealer/utilities/dyanmic_data_result/results_controller.dart';
+import 'package:dealer/models/results_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 

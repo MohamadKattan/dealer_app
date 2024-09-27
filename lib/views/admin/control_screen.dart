@@ -38,6 +38,8 @@ class ControlScreen extends StatelessWidget {
                             sizeIcon: 40,
                             txt: AppLocalizations.of(context)!.dbSetting),
                         AppBtn.cardBtn(
+                            function: () =>
+                                router.replace(const CreateUserRoute()),
                             icon: Icons.people_sharp,
                             sizeIcon: 40,
                             txt:

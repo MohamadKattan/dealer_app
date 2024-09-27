@@ -27,7 +27,7 @@ class AppBtn {
         style: ButtonStyle(
             backgroundColor: WidgetStateProperty.all<Color?>(bgColor)),
         child: const Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(2.0),
           child: AppIndicators.loadingCircularIndicator,
         ));
   }

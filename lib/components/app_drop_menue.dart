@@ -1,12 +1,14 @@
 import 'package:dealer/components/app_text.dart';
+import 'package:dealer/utilities/ui_res_app/ui_responsev_controller.dart';
 import 'package:flutter/material.dart';
 
 enum DropLable {
   dataType('Data Type'),
-  notNull('Null'),
+  notNull('Not Null'),
   autoIncrement('Auto++'),
   primaryKey('Primary Key'),
   forginKey('Forgin Key'),
+  uniQei('Unique'),
   defult('default');
 
   const DropLable(this.label);
@@ -33,6 +35,14 @@ enum BoolDropvAL {
 
   const BoolDropvAL(this.val);
   final bool val;
+}
+
+enum CustomDropMenuLevel {
+  firstVal(
+      ['admin', 'manager', 'acountan', 'retailSales', 'carSales', 'worker']);
+
+  final List list;
+  const CustomDropMenuLevel(this.list);
 }
 
 class AppDropMenue {
@@ -85,5 +95,32 @@ class AppDropMenue {
         ),
       ),
     );
+  }
+
+  static Widget customDropMenu({
+    required TextEditingController controller,
+    required String label,
+    required List value,
+  }) {
+    return Builder(builder: (context) {
+      final newWidth = UiResponsive.globalMedia(context: context);
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: DropdownMenu<String>(
+          initialSelection: value.first,
+          controller: controller,
+          requestFocusOnTap: true,
+          width: newWidth >= ScreenSize.isIpad.width ? 400 : null,
+          label: AppText.normalText(label),
+          dropdownMenuEntries: value.map<DropdownMenuEntry<String>>((val) {
+            return DropdownMenuEntry<String>(
+              value: val.toString(),
+              label: val.toString(),
+              enabled: true,
+            );
+          }).toList(),
+        ),
+      );
+    });
   }
 }

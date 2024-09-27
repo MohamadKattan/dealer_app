@@ -130,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         onPressed: () {
                                           context
                                               .read<LoginBloc>()
-                                              .newLogin(userName, passWord);
+                                              .login(userName, passWord);
                                         },
                                       )
                                     : AppBtn.loudingBtn()

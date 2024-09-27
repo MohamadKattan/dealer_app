@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:dealer/models/user_model.dart';
 import 'package:dealer/utilities/dev_helper/app_getter.dart';
 import 'package:dealer/utilities/dev_helper/logger_controller.dart';
-import 'package:dealer/utilities/dyanmic_data_result/results_controller.dart';
+import 'package:dealer/models/results_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -47,7 +47,7 @@ class LoginBloc extends Cubit<int> {
     emit(LoginStateLavel.hide.state);
   }
 
-  Future<void> newLogin(
+  Future<void> login(
       TextEditingController name, TextEditingController passWord) async {
     if (name.text.isEmpty) {
       emit(LoginStateLavel.errorName.state);
@@ -70,8 +70,8 @@ class LoginBloc extends Cubit<int> {
     emit(LoginStateLavel.startLogin.state);
     try {
       final user = User(userName: name.text, passWord: passWord.text.trim());
-      final res = await AppGetter.httpSrv
-          .postData(LoginSubUrl.loginRoot.subRoute, user.toJson());
+      final res = await AppGetter.httpSrv.postData(
+          LoginSubUrl.loginRoot.subRoute, user.toJson(UserJsonType.logIn));
       if (res.status == ResultsLevel.fail) {
         emit(LoginStateLavel.failLogin.state);
         AppGetter.appLogger.showLogger(LogLevel.warning, '${res.data}');
@@ -94,8 +94,6 @@ class LoginBloc extends Cubit<int> {
       AppGetter.appLogger.showLogger(LogLevel.error, '*** ${e.toString()}***');
     }
   }
-
-  Future<void> createNewUser() async {}
 
   Future<void> signOut() async {}
 }

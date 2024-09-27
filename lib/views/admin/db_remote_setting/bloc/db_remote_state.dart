@@ -59,3 +59,8 @@ class EditTableState extends DbRemoteState {
   String? msg;
   EditTableState({this.msg});
 }
+
+class DevOptionsDbState extends DbRemoteState {
+  String? msg;
+  DevOptionsDbState({this.msg});
+}

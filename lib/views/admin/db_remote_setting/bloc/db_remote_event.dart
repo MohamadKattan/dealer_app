@@ -39,8 +39,17 @@ class DeleteOneColumnEvent extends DbRemoteEvent {
   DeleteOneColumnEvent(this.tableName, this.columnName);
 }
 
-class EditTableEvent extends DbRemoteEvent {
+class EditTableOrColumnEvent extends DbRemoteEvent {
   String tableName;
+  bool isEditTable;
   Object oneColum;
-  EditTableEvent(this.tableName, this.oneColum);
+  EditTableOrColumnEvent(this.tableName, this.oneColum, this.isEditTable);
+}
+
+class DevOptionsDbEvent extends DbRemoteEvent {
+  String pass;
+  String text;
+  String url;
+  DevOptionsDbEvent(
+      {required this.pass, required this.text, required this.url});
 }

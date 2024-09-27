@@ -33,6 +33,10 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
   final forginKey = TextEditingController();
   final autoIncrement = TextEditingController();
   final defaultValuse = TextEditingController();
+  final devOptionsKey = TextEditingController();
+  final devOptionsUrl = TextEditingController();
+  final devOptionsText = TextEditingController();
+  final unique = TextEditingController();
   String? errorColumn;
   List listCreateColumns = [];
   List? listAllTables;
@@ -47,6 +51,10 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
     forginKey.dispose();
     autoIncrement.dispose();
     defaultValuse.dispose();
+    devOptionsKey.dispose();
+    devOptionsUrl.dispose();
+    devOptionsText.dispose();
+    unique.dispose();
     super.dispose();
   }
 
@@ -172,7 +180,10 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
               },
               txt: 'Cancle',
               color: Colors.redAccent),
-          AppBtn.cardBtn(txt: 'Refresh', color: Colors.amber),
+          AppBtn.cardBtn(
+              function: () => _devOptions(context),
+              txt: 'Options',
+              color: Colors.amber),
           CircleAvatar(
             radius: 25,
             child: AppBtn.iconBtn(
@@ -262,7 +273,8 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
                     TableCell(
                         child: AppBtn.iconBtn(
                             onPressed: () {
-                              _editTable(listAllTables?[i], context);
+                              _editTableOrColumn(
+                                  listAllTables?[i], context, true);
                             },
                             icon: Icons.edit)),
                     TableCell(
@@ -324,6 +336,10 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
                                 TableCell(
                                     child: Center(
                                         child: AppText.normalText(
+                                            'Edite Column'))),
+                                TableCell(
+                                    child: Center(
+                                        child: AppText.normalText(
                                             'Delete Column'))),
                               ],
                             )
@@ -358,6 +374,14 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
                                         child: Center(
                                             child: AppText.normalText(
                                                 '${data[i]['null']}'))),
+                                    TableCell(
+                                      child: AppBtn.iconBtn(
+                                          icon: Icons.edit,
+                                          onPressed: () {
+                                            _editTableOrColumn(
+                                                tableName, context, false);
+                                          }),
+                                    ),
                                     TableCell(
                                       child: AppBtn.iconBtn(
                                           icon: Icons.delete_forever,
@@ -527,6 +551,8 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
                       label: DropLable.primaryKey.label),
                   AppDropMenue.dropDownBool(
                       controller: forginKey, label: DropLable.forginKey.label),
+                  AppDropMenue.dropDownBool(
+                      controller: unique, label: DropLable.uniQei.label),
                 ],
               ),
             if (width <= ScreenSize.isMobile.width)
@@ -536,17 +562,19 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
                     AppDropMenue.menueDataType(controller: dataType),
                     AppDropMenue.dropDownBool(
                         controller: notNull, label: DropLable.notNull.label),
-                  ]),
-                  Row(children: [
                     AppDropMenue.dropDownBool(
                         controller: autoIncrement,
                         label: DropLable.autoIncrement.label),
+                  ]),
+                  Row(children: [
                     AppDropMenue.dropDownBool(
                         controller: primaryKey,
                         label: DropLable.primaryKey.label),
                     AppDropMenue.dropDownBool(
                         controller: forginKey,
                         label: DropLable.forginKey.label),
+                    AppDropMenue.dropDownBool(
+                        controller: unique, label: DropLable.uniQei.label),
                   ])
                 ],
               )
@@ -674,12 +702,12 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
   }
 
 // methods
-  Future _addAndclear() async {
+  Future<bool> _addAndclear() async {
     if (columnName.text.isEmpty) {
       errorColumn = 'Column name is empty';
       await Future.delayed(const Duration(seconds: 1));
       errorColumn = null;
-      return;
+      return false;
     }
     final newColoumn = {
       "name": columnName.text,
@@ -689,9 +717,11 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
       "autoIncrement": autoIncrement.text == 'false' ? false : true,
       "primaryKey": primaryKey.text == 'false' ? false : true,
       "foreignKey": forginKey.text == 'false' ? false : true,
+      "unique": unique.text == 'false' ? false : true
     };
     listCreateColumns.add(newColoumn);
     _clear();
+    return true;
   }
 
   void _removeOneColumn(BuildContext context, int i) {
@@ -804,24 +834,56 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
     );
   }
 
-  void _editTable(String tableName, BuildContext context) {
+  void _editTableOrColumn(
+      String tableName, BuildContext context, bool isEditeTable) {
     AppDialog.dialogBuilder(
       context: context,
-      title: 'Add New Column to \n Table $tableName',
+      title: 'Table : $tableName',
       content: '------------',
       widget: _newColumn(),
       onPressedPop: () => HelperMethods.popMethod(context),
       txtPop: 'Cancel',
       secondBtn: true,
-      txtSecond: 'Add',
+      txtSecond: 'Okay',
       onPressedSecond: () async {
-        await _addAndclear();
+        final res = await _addAndclear();
+        if (res) {
+          if (!context.mounted) return;
+          HelperMethods.popMethod(context);
+          context.read<DbRemoteBloc>().add(EditTableOrColumnEvent(
+              tableName, listCreateColumns[0], isEditeTable));
+        }
+      },
+    );
+  }
 
-        if (!context.mounted) return;
+  void _devOptions(BuildContext context) {
+    AppDialog.dialogBuilder(
+      context: context,
+      title: 'Dev Options',
+      bgColor: const Color.fromARGB(255, 234, 186, 182),
+      content: '',
+      txtPop: 'Cancel',
+      secondBtn: true,
+      txtSecond: 'okay',
+      widget: Column(
+        children: [
+          AppTextField.customField(controller: devOptionsUrl, labelText: 'url'),
+          AppTextField.customField(controller: devOptionsKey, labelText: 'key'),
+          AppTextField.customField(
+              controller: devOptionsText, labelText: 'text'),
+        ],
+      ),
+      onPressedPop: () => HelperMethods.popMethod(context),
+      onPressedSecond: () async {
         HelperMethods.popMethod(context);
-        context
-            .read<DbRemoteBloc>()
-            .add(EditTableEvent(tableName, listCreateColumns[0]));
+        context.read<DbRemoteBloc>().add(DevOptionsDbEvent(
+            pass: devOptionsKey.text,
+            text: devOptionsText.text,
+            url: devOptionsUrl.text.trim()));
+        // await Future.delayed(const Duration(milliseconds: 500));
+        // if (!context.mounted) return;
+        // HelperMethods.popMethod(context);
       },
     );
   }

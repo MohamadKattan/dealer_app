@@ -1,7 +1,7 @@
 import 'package:dealer/local_db/hive_db_controller.dart';
 import 'package:dealer/utilities/dev_helper/app_getter.dart';
 import 'package:dealer/utilities/dev_helper/logger_controller.dart';
-import 'package:dealer/utilities/dyanmic_data_result/results_controller.dart';
+import 'package:dealer/models/results_controller.dart';
 import 'package:dealer/utilities/style_app/app_them/app_them.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
