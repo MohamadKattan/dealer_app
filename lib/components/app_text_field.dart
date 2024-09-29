@@ -16,11 +16,13 @@ class AppTextField {
       Widget? suffixIcon,
       Widget? suffix,
       String? errorText,
-      IconData? icons}) {
+      IconData? icons,
+      int? maxLines}) {
     return Padding(
       padding: EdgeInsets.all(padding ?? 8.0),
       child: TextField(
         controller: controller,
+        maxLines: maxLines ?? 1,
         onChanged: onChanged,
         keyboardType: keyboardType,
         obscureText: obscureText ?? false,

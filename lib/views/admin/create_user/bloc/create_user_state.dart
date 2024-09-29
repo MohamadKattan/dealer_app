@@ -2,13 +2,21 @@ abstract class UserSettingsStates {}
 
 class InitialState extends UserSettingsStates {}
 
-class ShowHidePassWordState extends UserSettingsStates {
-  bool isShow;
-  ShowHidePassWordState(this.isShow);
+class LoudingState extends UserSettingsStates {}
+
+class ShowFormSginUpState extends UserSettingsStates {
+  bool? showPass;
+  String? titleMsg;
+  String? msg;
+  ShowFormSginUpState({this.showPass, this.titleMsg, this.msg});
 }
 
 class SignUpUserState extends UserSettingsStates {
-  bool? isLouding;
   String? msg;
-  SignUpUserState({this.isLouding, this.msg});
+  SignUpUserState({this.msg});
+}
+
+class GetAllUsersState<T> extends UserSettingsStates {
+  T? data;
+  GetAllUsersState({this.data});
 }

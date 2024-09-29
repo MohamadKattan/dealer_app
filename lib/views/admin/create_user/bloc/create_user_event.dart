@@ -1,9 +1,13 @@
 abstract class UserSettingsEvents {}
 
+class InitialEvent extends UserSettingsEvents {}
+
 class ShowHidePassWordEvent extends UserSettingsEvents {
   bool show;
   ShowHidePassWordEvent(this.show);
 }
+
+class ShowFormSignUpEvent extends UserSettingsEvents {}
 
 class SginUpUserEvent extends UserSettingsEvents {
   String userName;
@@ -16,3 +20,5 @@ class SginUpUserEvent extends UserSettingsEvents {
       required this.per,
       this.address});
 }
+
+class GetAllUsersEvent extends UserSettingsEvents {}

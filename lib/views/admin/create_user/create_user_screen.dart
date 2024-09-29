@@ -3,6 +3,8 @@ import 'package:dealer/components/app_btn.dart';
 import 'package:dealer/components/app_dialog.dart';
 import 'package:dealer/components/app_drop_menue.dart';
 import 'package:dealer/components/app_image.dart';
+import 'package:dealer/components/app_indicators.dart';
+import 'package:dealer/components/app_text.dart';
 import 'package:dealer/components/app_text_field.dart';
 import 'package:dealer/controller/helper_methods_controller.dart';
 import 'package:dealer/router/router_app.gr.dart';
@@ -29,7 +31,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
   final addressController = TextEditingController();
   final perController = TextEditingController();
   bool show = true;
-  bool isLoudingBtn = false;
+
   @override
   void dispose() {
     nameController.dispose();
@@ -41,33 +43,52 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: Scaffold(
-      body:
-          BlocBuilder<CreateUserBloc, UserSettingsStates>(builder: (_, state) {
-        if (state is InitialState) {}
-        if (state is ShowHidePassWordState) {
-          show = state.isShow;
-        }
-        if (state is SignUpUserState) {
-          isLoudingBtn = state.isLouding ?? false;
-          if (state.msg != null) {
-            _showMsg(context, state.msg!);
-            state.msg = null;
-          }
-        }
-        return _body(state);
-      }),
-    ));
+    return SafeArea(
+      child: Scaffold(
+        body: BlocBuilder<CreateUserBloc, UserSettingsStates>(
+          builder: (_, state) {
+            if (state is InitialState) {
+              _clear();
+            }
+
+            if (state is LoudingState) {
+              return _louding();
+            }
+
+            if (state is ShowFormSginUpState) {
+              show = state.showPass ?? false;
+              if (state.msg != null) {
+                _showMsg(context, state.titleMsg ?? 'msg', state.msg!);
+                state.msg = null;
+                state.titleMsg = null;
+              }
+              return _signUpForm();
+            }
+
+            if (state is SignUpUserState) {
+              if (state.msg != null) {
+                _showMsg(context, 'Msg', state.msg!);
+                state.msg = null;
+                context.read<CreateUserBloc>().add(InitialEvent());
+              }
+            }
+
+            if (state is GetAllUsersState) {}
+
+            return _body();
+          },
+        ),
+      ),
+    );
   }
 
   // main
-  Widget _body(UserSettingsStates state) {
+  Widget _body() {
     return SingleChildScrollView(
       child: Column(
         children: [
           Container(color: Colors.lightBlue.shade100, height: 8.0),
           _header(),
-          _signUpForm(state)
         ],
       ),
     );
@@ -79,6 +100,12 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
+          AppBtn.cardBtn(
+              color: Colors.greenAccent,
+              function: () {
+                context.read<CreateUserBloc>().add(ShowFormSignUpEvent());
+              },
+              txt: 'New User'),
           CircleAvatar(
             radius: 25,
             child: AppBtn.iconBtn(
@@ -95,7 +122,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
     );
   }
 
-  Widget _signUpForm(UserSettingsStates state) {
+  Widget _signUpForm() {
     return SingleChildScrollView(
       child: Center(
         child: Column(
@@ -138,16 +165,26 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                       AppDropMenue.customDropMenu(
                           controller: perController,
                           label: 'Permissions',
-                          value: CustomDropMenuLevel.firstVal.list),
+                          value: CustomDropMenuLevel.per.list),
                       const SizedBox(height: 20),
-                      !isLoudingBtn
-                          ? AppBtn.elevBtn(
-                              txt: AppLocalizations.of(context)!.btnLogin,
-                              onPressed: () {
-                                _createNewUser();
-                              },
-                            )
-                          : AppBtn.loudingBtn()
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          AppBtn.elevBtn(
+                            txt: 'Cancel',
+                            bgColor: Colors.red,
+                            onPressed: () {
+                              _initialSettings();
+                            },
+                          ),
+                          AppBtn.elevBtn(
+                            txt: 'SginUp',
+                            onPressed: () {
+                              _createNewUser();
+                            },
+                          )
+                        ],
+                      ),
                     ],
                   ),
                 );
@@ -159,6 +196,43 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
     );
   }
 
+  Widget _louding() {
+    return Container(
+      height: UiResponsive.globalMedia(context: context, isHeight: true),
+      width: UiResponsive.globalMedia(context: context),
+      color: const Color.fromARGB(66, 44, 41, 41),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AppIndicators.loadingCircularIndicator,
+          AppText.normalText('Please wait...')
+        ],
+      ),
+    );
+  }
+
+  Future _showMsg(BuildContext context, String title, String txt) async {
+    Future.delayed(const Duration(milliseconds: 300)).whenComplete(
+      () {
+        if (!context.mounted) return;
+        AppDialog.dialogBuilder(
+          context: context,
+          title: title,
+          content: txt,
+          txtPop: 'okay',
+          onPressedPop: () {
+            HelperMethods.popMethod(context);
+          },
+        );
+      },
+    );
+  }
+
+  void _initialSettings() {
+    context.read<CreateUserBloc>().add(InitialEvent());
+  }
+
   void _createNewUser() {
     context.read<CreateUserBloc>().add(SginUpUserEvent(
         userName: nameController.text,
@@ -167,21 +241,10 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
         address: addressController.text));
   }
 
-  Future _showMsg(BuildContext context, String txt, {Color? color}) async {
-    Future.delayed(const Duration(milliseconds: 300)).whenComplete(
-      () {
-        if (!context.mounted) return;
-        AppDialog.dialogBuilder(
-          context: context,
-          title: 'Msg',
-          content: txt,
-          txtPop: 'okay',
-          bgColor: color,
-          onPressedPop: () {
-            HelperMethods.popMethod(context);
-          },
-        );
-      },
-    );
+  void _clear() {
+    nameController.clear();
+    passController.clear();
+    perController.clear();
+    addressController.clear();
   }
 }

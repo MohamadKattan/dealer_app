@@ -17,8 +17,11 @@ enum SignUpUserSuburl {
 
 class CreateUserBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
   CreateUserBloc() : super(InitialState()) {
+    on<InitialEvent>(_initialSettings);
+    on<ShowFormSignUpEvent>(_showFormSginUp);
     on<ShowHidePassWordEvent>(_showHidePassWord);
     on<SginUpUserEvent>(_signUpNewUser);
+    on<GetAllUsersEvent>(_getAllUsers);
   }
 
   bool _isPasswordStrong(String password) {
@@ -29,34 +32,46 @@ class CreateUserBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
     return strongPasswordRegExp.hasMatch(password);
   }
 
+  _initialSettings(InitialEvent event, Emitter<UserSettingsStates> emit) {
+    emit(InitialState());
+  }
+
+  _showFormSginUp(ShowFormSignUpEvent event, Emitter<UserSettingsStates> emit) {
+    emit(ShowFormSginUpState());
+  }
+
   _showHidePassWord(
       ShowHidePassWordEvent event, Emitter<UserSettingsStates> emit) {
-    emit(ShowHidePassWordState(!event.show));
+    emit(ShowFormSginUpState(showPass: !event.show));
   }
 
   _signUpNewUser(
       SginUpUserEvent event, Emitter<UserSettingsStates> emit) async {
     try {
       if (event.userName.isEmpty) {
-        emit(SignUpUserState(msg: 'Username is required'));
+        emit(ShowFormSginUpState(
+            titleMsg: 'Error', msg: 'Username is required'));
         return;
       }
       if (event.passWord.isEmpty) {
-        emit(SignUpUserState(msg: 'PassWord is required'));
+        emit(ShowFormSginUpState(
+            titleMsg: 'Error', msg: 'PassWord is required'));
         return;
       }
       if (!_isPasswordStrong(event.passWord)) {
-        emit(SignUpUserState(msg: 'PassWord is Not Strong'));
+        emit(ShowFormSginUpState(
+            titleMsg: 'Error', msg: 'PassWord is weak\n Example : Password99'));
         return;
       }
       if (event.per.isEmpty) {
-        emit(SignUpUserState(msg: 'Permissions is required'));
+        emit(ShowFormSginUpState(
+            titleMsg: 'Error', msg: 'Permissions is required'));
         return;
       }
       if (event.address!.length <= 1) {
         event.address = 'No address provided';
       }
-      emit(SignUpUserState(isLouding: true));
+      emit(LoudingState());
       final user = User(
           userName: event.userName,
           passWord: event.passWord,
@@ -70,11 +85,15 @@ class CreateUserBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
       if (res.status == ResultsLevel.fail) {
         AppGetter.appLogger
             .showLogger(LogLevel.error, result.msg ?? 'null error msg');
+        return emit(ShowFormSginUpState(
+            titleMsg: 'Error', msg: result.msg ?? 'null data'));
       }
-      emit(SignUpUserState(isLouding: false, msg: result.msg ?? 'null data'));
+      emit(SignUpUserState(msg: result.msg ?? 'null data'));
     } catch (e) {
       AppGetter.appLogger.showLogger(LogLevel.error, e.toString());
-      emit(SignUpUserState(msg: e.toString()));
+      emit(ShowFormSginUpState(titleMsg: 'Error', msg: e.toString()));
     }
   }
+
+  _getAllUsers(GetAllUsersEvent event, Emitter<UserSettingsStates> emit) {}
 }

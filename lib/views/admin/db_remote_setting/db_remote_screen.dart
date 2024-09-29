@@ -540,41 +540,76 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
             if (width > ScreenSize.isMobile.width)
               Row(
                 children: [
-                  AppDropMenue.menueDataType(controller: dataType),
-                  AppDropMenue.dropDownBool(
-                      controller: notNull, label: DropLable.notNull.label),
-                  AppDropMenue.dropDownBool(
-                      controller: autoIncrement,
-                      label: DropLable.autoIncrement.label),
-                  AppDropMenue.dropDownBool(
-                      controller: primaryKey,
-                      label: DropLable.primaryKey.label),
-                  AppDropMenue.dropDownBool(
-                      controller: forginKey, label: DropLable.forginKey.label),
-                  AppDropMenue.dropDownBool(
-                      controller: unique, label: DropLable.uniQei.label),
+                  // AppDropMenue.menueDataType(controller: dataType),
+                  AppDropMenue.customDropMenu(
+                      controller: dataType,
+                      label: DropdownMenuLable.dataType.label,
+                      value: CustomDropMenuLevel.dataType.list),
+                  Expanded(
+                      child: AppDropMenue.customDropMenu(
+                          controller: notNull,
+                          label: DropdownMenuLable.notNull.label,
+                          value: CustomDropMenuLevel.boolType.list)),
+                  Expanded(
+                      child: AppDropMenue.customDropMenu(
+                          controller: autoIncrement,
+                          label: DropdownMenuLable.autoIncrement.label,
+                          value: CustomDropMenuLevel.boolType.list)),
+                  Expanded(
+                      child: AppDropMenue.customDropMenu(
+                          controller: primaryKey,
+                          label: DropdownMenuLable.primaryKey.label,
+                          value: CustomDropMenuLevel.boolType.list)),
+
+                  Expanded(
+                      child: AppDropMenue.customDropMenu(
+                          controller: forginKey,
+                          label: DropdownMenuLable.forginKey.label,
+                          value: CustomDropMenuLevel.boolType.list)),
+
+                  Expanded(
+                      child: AppDropMenue.customDropMenu(
+                          controller: unique,
+                          label: DropdownMenuLable.uniQei.label,
+                          value: CustomDropMenuLevel.boolType.list)),
                 ],
               ),
             if (width <= ScreenSize.isMobile.width)
               Column(
                 children: [
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    AppDropMenue.menueDataType(controller: dataType),
-                    AppDropMenue.dropDownBool(
-                        controller: notNull, label: DropLable.notNull.label),
-                    AppDropMenue.dropDownBool(
-                        controller: autoIncrement,
-                        label: DropLable.autoIncrement.label),
+                    // AppDropMenue.menueDataType(controller: dataType),
+                    AppDropMenue.customDropMenu(
+                        controller: dataType,
+                        label: DropdownMenuLable.dataType.label,
+                        value: CustomDropMenuLevel.dataType.list),
+                    Expanded(
+                        child: AppDropMenue.customDropMenu(
+                            controller: notNull,
+                            label: DropdownMenuLable.notNull.label,
+                            value: CustomDropMenuLevel.boolType.list)),
+                    Expanded(
+                        child: AppDropMenue.customDropMenu(
+                            controller: autoIncrement,
+                            label: DropdownMenuLable.autoIncrement.label,
+                            value: CustomDropMenuLevel.boolType.list)),
                   ]),
                   Row(children: [
-                    AppDropMenue.dropDownBool(
-                        controller: primaryKey,
-                        label: DropLable.primaryKey.label),
-                    AppDropMenue.dropDownBool(
-                        controller: forginKey,
-                        label: DropLable.forginKey.label),
-                    AppDropMenue.dropDownBool(
-                        controller: unique, label: DropLable.uniQei.label),
+                    Expanded(
+                        child: AppDropMenue.customDropMenu(
+                            controller: primaryKey,
+                            label: DropdownMenuLable.primaryKey.label,
+                            value: CustomDropMenuLevel.boolType.list)),
+                    Expanded(
+                        child: AppDropMenue.customDropMenu(
+                            controller: forginKey,
+                            label: DropdownMenuLable.forginKey.label,
+                            value: CustomDropMenuLevel.boolType.list)),
+                    Expanded(
+                        child: AppDropMenue.customDropMenu(
+                            controller: unique,
+                            label: DropdownMenuLable.uniQei.label,
+                            value: CustomDropMenuLevel.boolType.list)),
                   ])
                 ],
               )
@@ -871,7 +906,7 @@ class _DbRemoteScreenState extends State<DbRemoteScreen> {
           AppTextField.customField(controller: devOptionsUrl, labelText: 'url'),
           AppTextField.customField(controller: devOptionsKey, labelText: 'key'),
           AppTextField.customField(
-              controller: devOptionsText, labelText: 'text'),
+              controller: devOptionsText, labelText: 'text', maxLines: 5),
         ],
       ),
       onPressedPop: () => HelperMethods.popMethod(context),
