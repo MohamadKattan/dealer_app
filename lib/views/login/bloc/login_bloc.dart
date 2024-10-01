@@ -31,15 +31,6 @@ enum LoginStateLavel {
 class LoginBloc extends Cubit<int> {
   LoginBloc() : super(LoginStateLavel.initLogin.state);
 
-  bool isPasswordStrong(String password) {
-    // (?=.*[\u0621-\u064A])
-    final strongPasswordRegExp = RegExp(
-      r'^(?=.*[A-Za-z\u0400-\u04FFÇĞİÖŞÜçğıöşü])(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{8,}$',
-    );
-
-    return strongPasswordRegExp.hasMatch(password);
-  }
-
   isShowPassword(bool show) {
     if (show) {
       return emit(LoginStateLavel.showPass.state);
@@ -61,15 +52,9 @@ class LoginBloc extends Cubit<int> {
       return emit(LoginStateLavel.initLogin.state);
     }
 
-    if (!isPasswordStrong(passWord.text)) {
-      emit(LoginStateLavel.weakPassword.state);
-      await Future.delayed(const Duration(seconds: 2));
-      return emit(LoginStateLavel.initLogin.state);
-    }
-
     emit(LoginStateLavel.startLogin.state);
     try {
-      final user = User(userName: name.text, passWord: passWord.text.trim());
+      final user = UserModel(userName: name.text, passWord: passWord.text.trim());
       final res = await AppGetter.httpSrv.postData(
           LoginSubUrl.loginRoot.subRoute, user.toJson(UserJsonType.logIn));
       if (res.status == ResultsLevel.fail) {

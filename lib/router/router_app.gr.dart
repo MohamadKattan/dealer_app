@@ -10,7 +10,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i7;
 import 'package:dealer/views/admin/control_screen.dart' as _i1;
-import 'package:dealer/views/admin/create_user/create_user_screen.dart' as _i2;
+import 'package:dealer/views/admin/create_user/user_settings_screen.dart' as _i2;
 import 'package:dealer/views/admin/db_remote_setting/db_remote_screen.dart'
     as _i3;
 import 'package:dealer/views/home/home_screen.dart' as _i4;

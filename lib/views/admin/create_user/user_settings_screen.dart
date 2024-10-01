@@ -10,9 +10,9 @@ import 'package:dealer/controller/helper_methods_controller.dart';
 import 'package:dealer/router/router_app.gr.dart';
 import 'package:dealer/utilities/style_app/config/style_config.dart';
 import 'package:dealer/utilities/ui_res_app/ui_responsev_controller.dart';
-import 'package:dealer/views/admin/create_user/bloc/create_user_bloc.dart';
-import 'package:dealer/views/admin/create_user/bloc/create_user_event.dart';
-import 'package:dealer/views/admin/create_user/bloc/create_user_state.dart';
+import 'package:dealer/views/admin/create_user/bloc/user_settings_bloc.dart';
+import 'package:dealer/views/admin/create_user/bloc/user_settings_event.dart';
+import 'package:dealer/views/admin/create_user/bloc/user_settings_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -45,10 +45,11 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: BlocBuilder<CreateUserBloc, UserSettingsStates>(
+        body: BlocBuilder<UserSettingsBloc, UserSettingsStates>(
           builder: (_, state) {
             if (state is InitialState) {
               _clear();
+              context.read<UserSettingsBloc>().add(GetAllUsersEvent());
             }
 
             if (state is LoudingState) {
@@ -56,7 +57,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
             }
 
             if (state is ShowFormSginUpState) {
-              show = state.showPass ?? false;
+              show = state.showPass ?? true;
               if (state.msg != null) {
                 _showMsg(context, state.titleMsg ?? 'msg', state.msg!);
                 state.msg = null;
@@ -69,11 +70,13 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
               if (state.msg != null) {
                 _showMsg(context, 'Msg', state.msg!);
                 state.msg = null;
-                context.read<CreateUserBloc>().add(InitialEvent());
+                context.read<UserSettingsBloc>().add(InitialEvent());
               }
             }
 
-            if (state is GetAllUsersState) {}
+            if (state is GetAllUsersState) {
+              return Text(state.data![0].userName.toString());
+            }
 
             return _body();
           },
@@ -103,7 +106,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
           AppBtn.cardBtn(
               color: Colors.greenAccent,
               function: () {
-                context.read<CreateUserBloc>().add(ShowFormSignUpEvent());
+                context.read<UserSettingsBloc>().add(ShowFormSignUpEvent());
               },
               txt: 'New User'),
           CircleAvatar(
@@ -147,7 +150,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                           suffix: IconButton(
                               onPressed: () {
                                 context
-                                    .read<CreateUserBloc>()
+                                    .read<UserSettingsBloc>()
                                     .add(ShowHidePassWordEvent(show));
                               },
                               icon: Icon(show
@@ -230,11 +233,11 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
   }
 
   void _initialSettings() {
-    context.read<CreateUserBloc>().add(InitialEvent());
+    context.read<UserSettingsBloc>().add(InitialEvent());
   }
 
   void _createNewUser() {
-    context.read<CreateUserBloc>().add(SginUpUserEvent(
+    context.read<UserSettingsBloc>().add(SginUpUserEvent(
         userName: nameController.text,
         passWord: passController.text.trim(),
         per: perController.text,

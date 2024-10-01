@@ -13,7 +13,7 @@ class AppHttpsSrv {
 
   Future<ResultController> getData(String root, {bool isAuth = false}) async {
     try {
-      dio.interceptors.add(LogInterceptor(responseBody: true));
+      // dio.interceptors.add(LogInterceptor(responseBody: true));
       dio.options.baseUrl = baseUrl;
       if (isAuth) {
         dio.options.headers = {
@@ -62,7 +62,6 @@ class AppHttpsSrv {
   Future<ResultController> putData(String url, Object data,
       {bool isAuth = false}) async {
     try {
-      dio.interceptors.add(LogInterceptor(responseBody: true));
       dio.options.baseUrl = baseUrl;
       if (isAuth) {
         dio.options.headers = {
@@ -85,7 +84,6 @@ class AppHttpsSrv {
   Future<ResultController> deleteData(String url, Object data,
       {bool isAuth = false}) async {
     try {
-      dio.interceptors.add(LogInterceptor(responseBody: true));
       dio.options.baseUrl = baseUrl;
       if (isAuth) {
         dio.options.headers = {

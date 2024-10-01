@@ -1,8 +1,15 @@
+import 'package:dealer/models/user_model.dart';
+
 abstract class UserSettingsStates {}
 
 class InitialState extends UserSettingsStates {}
 
 class LoudingState extends UserSettingsStates {}
+
+class ErrorState extends UserSettingsStates {
+  String? msg;
+  ErrorState(this.msg);
+}
 
 class ShowFormSginUpState extends UserSettingsStates {
   bool? showPass;
@@ -16,7 +23,7 @@ class SignUpUserState extends UserSettingsStates {
   SignUpUserState({this.msg});
 }
 
-class GetAllUsersState<T> extends UserSettingsStates {
-  T? data;
+class GetAllUsersState extends UserSettingsStates {
+  List<UserModel>? data;
   GetAllUsersState({this.data});
 }

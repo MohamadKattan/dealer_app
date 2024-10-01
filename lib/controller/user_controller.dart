@@ -6,8 +6,8 @@ import 'package:dealer/utilities/dev_helper/app_getter.dart';
 import 'package:dealer/models/results_controller.dart';
 
 class UserController {
-  User _user = User();
-  User get user => _user;
+  UserModel _user = UserModel();
+  UserModel get user => _user;
 
   Future<ResultController> getUserFromLocal() async {
     try {
@@ -18,7 +18,7 @@ class UserController {
         return ResultController(error: result.error, status: ResultsLevel.fail);
       } else if (result.data != null) {
         final map = jsonDecode(result.data) as Map<String, dynamic>;
-        User user = User.fromMap(map);
+        UserModel user = UserModel.fromMap(map);
         await _userProvider(user);
         return ResultController(data: true, status: ResultsLevel.success);
       } else {
@@ -31,12 +31,12 @@ class UserController {
 
   Future<ResultController> setUserToLocal(Map<String, dynamic> map) async {
     try {
-      final user = User.fromMap(map['data']);
+      final user = UserModel.fromMap(map['data']);
       String convertUser = jsonEncode({
         'user_name': user.userName,
         'per': user.per,
         'user_id': user.userId,
-        'address': user.address ?? '',
+        'address': user.address,
         'token': user.token
       });
       final resultSet = await AppGetter.localeSecureStorag
@@ -58,7 +58,7 @@ class UserController {
     }
   }
 
-  Future<void> _userProvider(User user) async {
+  Future<void> _userProvider(UserModel user) async {
     _user = user;
     AppGetter.per = _user.per ?? 'null per';
     AppGetter.usertoken = _user.token ?? 'null token';

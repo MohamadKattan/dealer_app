@@ -1,6 +1,6 @@
 enum UserJsonType { sginUp, logIn }
 
-class User {
+class UserModel {
   String? userName;
   String? passWord;
   String? per;
@@ -8,7 +8,7 @@ class User {
   String? token;
   int? userId;
 
-  User(
+  UserModel(
       {this.userName,
       this.per,
       this.userId,
@@ -16,15 +16,15 @@ class User {
       this.address,
       this.token});
 
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
         userId: map['user_id'],
         userName: map['user_name'],
         per: map['per'],
         address: map['address'],
         token: map['token']);
   }
-  
+
   Map<String, dynamic> toJson(UserJsonType type) {
     switch (type) {
       case UserJsonType.sginUp:

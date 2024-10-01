@@ -4,19 +4,20 @@ import 'package:dealer/models/user_model.dart';
 import 'package:dealer/utilities/dev_helper/app_getter.dart';
 import 'package:dealer/utilities/dev_helper/logger_controller.dart';
 import 'package:dealer/models/results_controller.dart';
-import 'package:dealer/views/admin/create_user/bloc/create_user_event.dart';
-import 'package:dealer/views/admin/create_user/bloc/create_user_state.dart';
+import 'package:dealer/views/admin/create_user/bloc/user_settings_event.dart';
+import 'package:dealer/views/admin/create_user/bloc/user_settings_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 enum SignUpUserSuburl {
-  createUser('createUser');
+  createUser('createUser'),
+  getAllUsers('getAllUsers');
 
   final String url;
   const SignUpUserSuburl(this.url);
 }
 
-class CreateUserBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
-  CreateUserBloc() : super(InitialState()) {
+class UserSettingsBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
+  UserSettingsBloc() : super(InitialState()) {
     on<InitialEvent>(_initialSettings);
     on<ShowFormSignUpEvent>(_showFormSginUp);
     on<ShowHidePassWordEvent>(_showHidePassWord);
@@ -72,7 +73,7 @@ class CreateUserBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
         event.address = 'No address provided';
       }
       emit(LoudingState());
-      final user = User(
+      final user = UserModel(
           userName: event.userName,
           passWord: event.passWord,
           address: event.address,
@@ -95,5 +96,28 @@ class CreateUserBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
     }
   }
 
-  _getAllUsers(GetAllUsersEvent event, Emitter<UserSettingsStates> emit) {}
+  _getAllUsers(GetAllUsersEvent event, Emitter<UserSettingsStates> emit) async {
+    List<UserModel>? listOfUsers = [];
+    try {
+      emit(LoudingState());
+      final result = await AppGetter.httpSrv
+          .getData(SignUpUserSuburl.getAllUsers.url, isAuth: true);
+      final dataDecode = jsonDecode(result.data);
+      final data = ResultController.fromMap(dataDecode);
+      if (result.status == ResultsLevel.fail) {
+        AppGetter.appLogger
+            .showLogger(LogLevel.error, data.msg ?? 'error to get all users**');
+        emit(ErrorState(data.msg));
+        return;
+      }
+      List resultUsers = data.data['results'];
+      for (var usr in resultUsers) {
+        final newUser = UserModel.fromMap(usr);
+        listOfUsers.add(newUser);
+      }
+      emit(GetAllUsersState(data: listOfUsers));
+    } catch (e) {
+      AppGetter.appLogger.showLogger(LogLevel.error, e.toString());
+    }
+  }
 }
