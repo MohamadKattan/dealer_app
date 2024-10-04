@@ -10,10 +10,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 enum SignUpUserSuburl {
   createUser('createUser'),
-  getAllUsers('getAllUsers');
+  getAllUsers('getAllUsers'),
+  deleteOneUser('deleteOneUser'),
+  editeOneUser('editeOneUser');
 
   final String url;
   const SignUpUserSuburl(this.url);
+}
+
+enum LevelUserSettingsMsg {
+  errorcreateNewUser,
+  createdNewUser,
+  getAllUsers,
+  nameRequired,
+  passWordRequired,
+  weakPassWord,
+  permissionsRequired,
+  catchError,
+  errorDeleteUser,
+  deletedUser,
+  errorEditeUser,
+  editedUser
 }
 
 class UserSettingsBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
@@ -23,6 +40,8 @@ class UserSettingsBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
     on<ShowHidePassWordEvent>(_showHidePassWord);
     on<SginUpUserEvent>(_signUpNewUser);
     on<GetAllUsersEvent>(_getAllUsers);
+    on<DeleteOneUserEvent>(_deleteOneUser);
+    on<EditeUserEvents>(_editeUserDate);
   }
 
   bool _isPasswordStrong(String password) {
@@ -33,40 +52,49 @@ class UserSettingsBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
     return strongPasswordRegExp.hasMatch(password);
   }
 
-  _initialSettings(InitialEvent event, Emitter<UserSettingsStates> emit) {
+  void _initialSettings(InitialEvent event, Emitter<UserSettingsStates> emit) {
     emit(InitialState());
   }
 
-  _showFormSginUp(ShowFormSignUpEvent event, Emitter<UserSettingsStates> emit) {
-    emit(ShowFormSginUpState());
-  }
-
-  _showHidePassWord(
+  void _showHidePassWord(
       ShowHidePassWordEvent event, Emitter<UserSettingsStates> emit) {
     emit(ShowFormSginUpState(showPass: !event.show));
   }
 
-  _signUpNewUser(
+  void _showFormSginUp(
+      ShowFormSignUpEvent event, Emitter<UserSettingsStates> emit) {
+    if (event.isForEidet == true) {
+      emit(ShowFormSginUpState(
+          userName: event.name,
+          address: event.address,
+          per: event.per,
+          isForEidet: true));
+    } else {
+      emit(ShowFormSginUpState(isForEidet: false));
+    }
+  }
+
+  void _signUpNewUser(
       SginUpUserEvent event, Emitter<UserSettingsStates> emit) async {
     try {
       if (event.userName.isEmpty) {
         emit(ShowFormSginUpState(
-            titleMsg: 'Error', msg: 'Username is required'));
+            msgInfo: '', level: LevelUserSettingsMsg.nameRequired));
         return;
       }
       if (event.passWord.isEmpty) {
         emit(ShowFormSginUpState(
-            titleMsg: 'Error', msg: 'PassWord is required'));
+            msgInfo: '', level: LevelUserSettingsMsg.passWordRequired));
         return;
       }
       if (!_isPasswordStrong(event.passWord)) {
         emit(ShowFormSginUpState(
-            titleMsg: 'Error', msg: 'PassWord is weak\n Example : Password99'));
+            msgInfo: '', level: LevelUserSettingsMsg.weakPassWord));
         return;
       }
       if (event.per.isEmpty) {
         emit(ShowFormSginUpState(
-            titleMsg: 'Error', msg: 'Permissions is required'));
+            msgInfo: '', level: LevelUserSettingsMsg.permissionsRequired));
         return;
       }
       if (event.address!.length <= 1) {
@@ -78,7 +106,7 @@ class UserSettingsBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
           passWord: event.passWord,
           address: event.address,
           per: event.per);
-      final body = user.toJson(UserJsonType.sginUp);
+      final body = user.toJson(UserJsonType.sginOrEdite);
       final res = await AppGetter.httpSrv
           .postData(SignUpUserSuburl.createUser.url, body, isAuth: true);
       final data = jsonDecode(res.data);
@@ -86,17 +114,23 @@ class UserSettingsBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
       if (res.status == ResultsLevel.fail) {
         AppGetter.appLogger
             .showLogger(LogLevel.error, result.msg ?? 'null error msg');
-        return emit(ShowFormSginUpState(
-            titleMsg: 'Error', msg: result.msg ?? 'null data'));
+        return emit(MessagesState(
+            msgInfo: result.msg ?? 'null data',
+            level: LevelUserSettingsMsg.errorcreateNewUser));
       }
-      emit(SignUpUserState(msg: result.msg ?? 'null data'));
+      emit(MessagesState(
+          title: 'Msg',
+          msgInfo: result.msg ?? 'null data',
+          level: LevelUserSettingsMsg.createdNewUser));
     } catch (e) {
       AppGetter.appLogger.showLogger(LogLevel.error, e.toString());
-      emit(ShowFormSginUpState(titleMsg: 'Error', msg: e.toString()));
+      emit(MessagesState(
+          msgInfo: e.toString(), level: LevelUserSettingsMsg.catchError));
     }
   }
 
-  _getAllUsers(GetAllUsersEvent event, Emitter<UserSettingsStates> emit) async {
+  void _getAllUsers(
+      GetAllUsersEvent event, Emitter<UserSettingsStates> emit) async {
     List<UserModel>? listOfUsers = [];
     try {
       emit(LoudingState());
@@ -107,7 +141,8 @@ class UserSettingsBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
       if (result.status == ResultsLevel.fail) {
         AppGetter.appLogger
             .showLogger(LogLevel.error, data.msg ?? 'error to get all users**');
-        emit(ErrorState(data.msg));
+        emit(MessagesState(
+            msgInfo: data.msg, level: LevelUserSettingsMsg.getAllUsers));
         return;
       }
       List resultUsers = data.data['results'];
@@ -118,6 +153,69 @@ class UserSettingsBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
       emit(GetAllUsersState(data: listOfUsers));
     } catch (e) {
       AppGetter.appLogger.showLogger(LogLevel.error, e.toString());
+      emit(MessagesState(
+          msgInfo: e.toString(), level: LevelUserSettingsMsg.catchError));
+    }
+  }
+
+  void _deleteOneUser(
+      DeleteOneUserEvent event, Emitter<UserSettingsStates> emit) async {
+    try {
+      emit(LoudingState());
+      final result = await AppGetter.httpSrv
+          .deleteData(SignUpUserSuburl.deleteOneUser.url, {"id": event.id});
+      final decodeData = jsonDecode(result.data);
+      final data = ResultController.fromMap(decodeData);
+      if (result.status == ResultsLevel.fail) {
+        AppGetter.appLogger.showLogger(LogLevel.error, data.msg ?? 'error');
+        emit(MessagesState(
+            msgInfo: data.msg, level: LevelUserSettingsMsg.errorDeleteUser));
+        return;
+      }
+      emit(MessagesState(
+          msgInfo: data.msg,
+          title: 'Msg',
+          level: LevelUserSettingsMsg.deletedUser));
+    } catch (e) {
+      AppGetter.appLogger.showLogger(LogLevel.error, e.toString());
+      emit(MessagesState(
+          msgInfo: e.toString(), level: LevelUserSettingsMsg.catchError));
+    }
+  }
+
+  void _editeUserDate(
+      EditeUserEvents event, Emitter<UserSettingsStates> emit) async {
+    try {
+      if (event.pass!.length > 1) {
+        if (!_isPasswordStrong(event.pass!)) {
+          emit(ShowFormSginUpState(
+              msgInfo: '', level: LevelUserSettingsMsg.weakPassWord));
+          return;
+        }
+      }
+      emit(LoudingState());
+      final editeUser = UserModel(
+          userName: event.name,
+          passWord: event.pass,
+          address: event.address,
+          per: event.per);
+      final body = editeUser.toJson(UserJsonType.sginOrEdite);
+      final result = await AppGetter.httpSrv
+          .putData(SignUpUserSuburl.editeOneUser.url, body);
+      final decode = jsonDecode(result.data);
+      final data = ResultController.fromMap(decode);
+      if (result.status == ResultsLevel.fail) {
+        AppGetter.appLogger.showLogger(LogLevel.error, data.msg ?? 'error');
+        emit(MessagesState(
+            msgInfo: data.msg, level: LevelUserSettingsMsg.errorEditeUser));
+        return;
+      }
+      emit(MessagesState(
+          msgInfo: data.msg, level: LevelUserSettingsMsg.editedUser));
+    } catch (e) {
+      AppGetter.appLogger.showLogger(LogLevel.error, e.toString());
+      emit(MessagesState(
+          level: LevelUserSettingsMsg.catchError, msgInfo: e.toString()));
     }
   }
 }

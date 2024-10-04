@@ -7,7 +7,13 @@ class ShowHidePassWordEvent extends UserSettingsEvents {
   ShowHidePassWordEvent(this.show);
 }
 
-class ShowFormSignUpEvent extends UserSettingsEvents {}
+class ShowFormSignUpEvent extends UserSettingsEvents {
+  String? name;
+  String? per;
+  String? address;
+  bool? isForEidet = false;
+  ShowFormSignUpEvent({this.name, this.address, this.per, this.isForEidet});
+}
 
 class SginUpUserEvent extends UserSettingsEvents {
   String userName;
@@ -22,3 +28,16 @@ class SginUpUserEvent extends UserSettingsEvents {
 }
 
 class GetAllUsersEvent extends UserSettingsEvents {}
+
+class DeleteOneUserEvent extends UserSettingsEvents {
+  int id;
+  DeleteOneUserEvent({required this.id});
+}
+
+class EditeUserEvents extends UserSettingsEvents {
+  String name;
+  String? pass;
+  String address;
+  String per;
+  EditeUserEvents({required this.name,required this.address,required this.per,this.pass});
+}

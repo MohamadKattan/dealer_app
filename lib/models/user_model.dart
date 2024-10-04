@@ -1,4 +1,4 @@
-enum UserJsonType { sginUp, logIn }
+enum UserJsonType { sginOrEdite, logIn }
 
 class UserModel {
   String? userName;
@@ -27,7 +27,7 @@ class UserModel {
 
   Map<String, dynamic> toJson(UserJsonType type) {
     switch (type) {
-      case UserJsonType.sginUp:
+      case UserJsonType.sginOrEdite:
         return {
           "userName": userName,
           "passWord": passWord,

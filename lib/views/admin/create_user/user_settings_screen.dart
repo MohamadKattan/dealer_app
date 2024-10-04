@@ -4,6 +4,7 @@ import 'package:dealer/components/app_dialog.dart';
 import 'package:dealer/components/app_drop_menue.dart';
 import 'package:dealer/components/app_image.dart';
 import 'package:dealer/components/app_indicators.dart';
+import 'package:dealer/components/app_tables_row.dart';
 import 'package:dealer/components/app_text.dart';
 import 'package:dealer/components/app_text_field.dart';
 import 'package:dealer/controller/helper_methods_controller.dart';
@@ -51,34 +52,39 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
               _clear();
               context.read<UserSettingsBloc>().add(GetAllUsersEvent());
             }
-
             if (state is LoudingState) {
               return _louding();
             }
 
-            if (state is ShowFormSginUpState) {
-              show = state.showPass ?? true;
-              if (state.msg != null) {
-                _showMsg(context, state.titleMsg ?? 'msg', state.msg!);
-                state.msg = null;
-                state.titleMsg = null;
+            if (state is MessagesState) {
+              if (state.level != null) {
+                _showMsg(context, state.title ?? 'Error',
+                    state.msgInfo ?? '***', state.level!);
+                state.level = null;
+                state.msgInfo = null;
               }
-              return _signUpForm();
             }
 
-            if (state is SignUpUserState) {
-              if (state.msg != null) {
-                _showMsg(context, 'Msg', state.msg!);
-                state.msg = null;
-                context.read<UserSettingsBloc>().add(InitialEvent());
+            if (state is ShowFormSginUpState) {
+              show = state.showPass ?? true;
+              if (state.level != null) {
+                _showMsg(context, state.title ?? 'Error',
+                    state.msgInfo ?? '***', state.level!);
+                state.level = null;
+                state.msgInfo = null;
               }
+              if (state.isForEidet ?? false) {
+                nameController.text = state.userName!;
+                addressController.text = state.address!;
+                perController.text = state.per!;
+              }
+              return _signUpForm(state);
             }
 
             if (state is GetAllUsersState) {
-              return Text(state.data![0].userName.toString());
+              return _body(state);
             }
-
-            return _body();
+            return _louding();
           },
         ),
       ),
@@ -86,12 +92,27 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
   }
 
   // main
-  Widget _body() {
+  Widget _body(GetAllUsersState state) {
     return SingleChildScrollView(
       child: Column(
         children: [
           Container(color: Colors.lightBlue.shade100, height: 8.0),
           _header(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  child: AppText.normalText(
+                    'Number of Users\n That exist in your db is ${state.data?.length ?? 0}',
+                  ),
+                ),
+              ),
+            ],
+          ),
+          AppTables.customHeadrTable(HeadRowsTypes.usersHeadr.list),
+          AppTables.dynmicTable(state.data!, BodyTableType.userModel, context)
         ],
       ),
     );
@@ -125,7 +146,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
     );
   }
 
-  Widget _signUpForm() {
+  Widget _signUpForm(ShowFormSginUpState state) {
     return SingleChildScrollView(
       child: Center(
         child: Column(
@@ -181,9 +202,9 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                             },
                           ),
                           AppBtn.elevBtn(
-                            txt: 'SginUp',
+                            txt: state.isForEidet == true ? 'Edite' : 'SginUp',
                             onPressed: () {
-                              _createNewUser();
+                              _createNewUser(state.isForEidet ?? false);
                             },
                           )
                         ],
@@ -215,14 +236,60 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
     );
   }
 
-  Future _showMsg(BuildContext context, String title, String txt) async {
+  Future _showMsg(BuildContext context, String title, String moreInfo,
+      LevelUserSettingsMsg level) async {
+    String? newMsg;
+    switch (level) {
+      case LevelUserSettingsMsg.errorcreateNewUser:
+        newMsg = 'Error while Create New user';
+        break;
+      case LevelUserSettingsMsg.createdNewUser:
+        newMsg = 'New User has been created';
+        context.read<UserSettingsBloc>().add(InitialEvent());
+        break;
+      case LevelUserSettingsMsg.getAllUsers:
+        newMsg = 'Error while get All Users';
+        break;
+      case LevelUserSettingsMsg.nameRequired:
+        newMsg = 'Username is required';
+        break;
+      case LevelUserSettingsMsg.passWordRequired:
+        newMsg = 'PassWord is required';
+        break;
+      case LevelUserSettingsMsg.weakPassWord:
+        newMsg = 'PassWord is weak\n Example for right format : Password99';
+        break;
+      case LevelUserSettingsMsg.permissionsRequired:
+        newMsg = 'permissions is Required';
+        break;
+      case LevelUserSettingsMsg.errorDeleteUser:
+        newMsg = 'Error while delete user';
+        break;
+      case LevelUserSettingsMsg.deletedUser:
+        newMsg = 'User has been deleted';
+        context.read<UserSettingsBloc>().add(InitialEvent());
+        break;
+      case LevelUserSettingsMsg.errorEditeUser:
+        newMsg = 'Error edite user';
+        context.read<UserSettingsBloc>().add(InitialEvent());
+        break;
+      case LevelUserSettingsMsg.editedUser:
+        newMsg = 'User info  has been update';
+        context.read<UserSettingsBloc>().add(InitialEvent());
+        break;
+      case LevelUserSettingsMsg.catchError:
+        newMsg = 'Un handel errro';
+        break;
+      default:
+        newMsg = 'UnKnown Error';
+    }
     Future.delayed(const Duration(milliseconds: 300)).whenComplete(
       () {
         if (!context.mounted) return;
         AppDialog.dialogBuilder(
           context: context,
           title: title,
-          content: txt,
+          content: '$newMsg\n $moreInfo',
           txtPop: 'okay',
           onPressedPop: () {
             HelperMethods.popMethod(context);
@@ -236,12 +303,20 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
     context.read<UserSettingsBloc>().add(InitialEvent());
   }
 
-  void _createNewUser() {
-    context.read<UserSettingsBloc>().add(SginUpUserEvent(
-        userName: nameController.text,
-        passWord: passController.text.trim(),
-        per: perController.text,
-        address: addressController.text));
+  void _createNewUser(bool isForEidet) {
+    if (isForEidet) {
+      context.read<UserSettingsBloc>().add(EditeUserEvents(
+          name: nameController.text,
+          pass: passController.text.trim(),
+          address: addressController.text,
+          per: perController.text));
+    } else {
+      context.read<UserSettingsBloc>().add(SginUpUserEvent(
+          userName: nameController.text,
+          passWord: passController.text.trim(),
+          per: perController.text,
+          address: addressController.text));
+    }
   }
 
   void _clear() {

@@ -1,4 +1,5 @@
 import 'package:dealer/models/user_model.dart';
+import 'package:dealer/views/admin/create_user/bloc/user_settings_bloc.dart';
 
 abstract class UserSettingsStates {}
 
@@ -6,16 +7,31 @@ class InitialState extends UserSettingsStates {}
 
 class LoudingState extends UserSettingsStates {}
 
-class ErrorState extends UserSettingsStates {
-  String? msg;
-  ErrorState(this.msg);
+class MessagesState extends UserSettingsStates {
+  String? title;
+  String? msgInfo;
+  LevelUserSettingsMsg? level;
+  MessagesState({this.msgInfo, this.level, this.title});
 }
 
 class ShowFormSginUpState extends UserSettingsStates {
   bool? showPass;
-  String? titleMsg;
-  String? msg;
-  ShowFormSginUpState({this.showPass, this.titleMsg, this.msg});
+  String? title;
+  String? msgInfo;
+  String? userName;
+  String? address;
+  String? per;
+  bool? isForEidet = false;
+  LevelUserSettingsMsg? level;
+  ShowFormSginUpState(
+      {this.showPass,
+      this.title,
+      this.msgInfo,
+      this.level,
+      this.userName,
+      this.address,
+      this.per,
+      this.isForEidet});
 }
 
 class SignUpUserState extends UserSettingsStates {
@@ -27,3 +43,5 @@ class GetAllUsersState extends UserSettingsStates {
   List<UserModel>? data;
   GetAllUsersState({this.data});
 }
+
+// class DeleteOneUserState extends UserSettingsStates {}

@@ -5,11 +5,14 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppHttpsSrv {
   String baseUrl = dotenv.get('API_URL', fallback: 'sane-default');
-  Map<String, String> normalHeader = {'Content-Type': 'application/json'};
   final dio = Dio(BaseOptions(
       sendTimeout: const Duration(milliseconds: 5000),
       receiveTimeout: const Duration(milliseconds: 5000),
-      validateStatus: (status) => status! < 500));
+      validateStatus: (status) => status! < 500,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': AppGetter.usertoken ?? 'null'
+      }));
 
   Future<ResultController> getData(String root, {bool isAuth = false}) async {
     try {
@@ -85,12 +88,12 @@ class AppHttpsSrv {
       {bool isAuth = false}) async {
     try {
       dio.options.baseUrl = baseUrl;
-      if (isAuth) {
-        dio.options.headers = {
-          'Content-Type': 'application/json',
-          'Authorization': AppGetter.usertoken ?? ''
-        };
-      }
+      // if (isAuth) {
+      //   dio.options.headers = {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': AppGetter.usertoken ?? ''
+      //   };
+      // }
       Response response = await dio.delete(url, data: data);
       if (response.statusCode != null &&
           (response.statusCode! < 200 || response.statusCode! >= 300)) {
