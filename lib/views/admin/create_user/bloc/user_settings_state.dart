@@ -21,6 +21,8 @@ class ShowFormSginUpState extends UserSettingsStates {
   String? userName;
   String? address;
   String? per;
+  String? passWord;
+  int? userId;
   bool? isForEidet = false;
   LevelUserSettingsMsg? level;
   ShowFormSginUpState(
@@ -31,7 +33,9 @@ class ShowFormSginUpState extends UserSettingsStates {
       this.userName,
       this.address,
       this.per,
-      this.isForEidet});
+      this.isForEidet,
+      this.userId,
+      this.passWord});
 }
 
 class SignUpUserState extends UserSettingsStates {

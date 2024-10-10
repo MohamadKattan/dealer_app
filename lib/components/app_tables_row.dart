@@ -68,35 +68,39 @@ class AppTables {
             TableCell(child: AppText.normalText(newUser[i].per!.toUpperCase())),
             TableCell(child: AppText.normalText(newUser[i].address!)),
             AppBtn.iconBtn(
-                icon: Icons.delete,
-                onPressed: () {
-                  AppDialog.dialogBuilder(
-                    context: context,
-                    secondBtn: true,
-                    bgColor: const Color.fromARGB(255, 247, 118, 118),
-                    title: 'Warning!!',
-                    content:
-                        'By click on delete btn\nYou are going to delete\nAll data and refrenc for\n The User :***${newUser[i].userName!}***',
-                    txtPop: 'Cancel',
-                    txtSecond: 'Delete',
-                    onPressedSecond: () {
-                      HelperMethods.popMethod(context);
-                      context
-                          .read<UserSettingsBloc>()
-                          .add(DeleteOneUserEvent(id: newUser[i].userId!));
-                    },
-                    onPressedPop: () => HelperMethods.popMethod(context),
-                  );
-                }),
+              icon: Icons.delete,
+              onPressed: () {
+                AppDialog.dialogBuilder(
+                  context: context,
+                  secondBtn: true,
+                  bgColor: const Color.fromARGB(255, 247, 118, 118),
+                  title: 'Warning!!',
+                  content:
+                      'By click on delete btn\nYou are going to delete\nAll data and refrenc for\n The User :***${newUser[i].userName!}***',
+                  txtPop: 'Cancel',
+                  txtSecond: 'Delete',
+                  onPressedSecond: () {
+                    HelperMethods.popMethod(context);
+                    context
+                        .read<UserSettingsBloc>()
+                        .add(DeleteOneUserEvent(id: newUser[i].userId!));
+                  },
+                  onPressedPop: () => HelperMethods.popMethod(context),
+                );
+              },
+            ),
             AppBtn.iconBtn(
-                icon: Icons.edit,
-                onPressed: () {
-                  context.read<UserSettingsBloc>().add(ShowFormSignUpEvent(
-                      name: newUser[i].userName!,
-                      per: newUser[i].per!,
-                      address: newUser[i].address!,
-                      isForEidet: true));
-                })
+              icon: Icons.edit,
+              onPressed: () {
+                context.read<UserSettingsBloc>().add(ShowFormSignUpEvent(
+                    id: newUser[i].userId!,
+                    name: newUser[i].userName!,
+                    per: newUser[i].per!,
+                    address: newUser[i].address!,
+                    passWord: newUser[i].passWord!,
+                    isForEidet: true));
+              },
+            ),
           ],
         );
       default:

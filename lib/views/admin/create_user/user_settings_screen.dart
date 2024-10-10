@@ -32,6 +32,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
   final addressController = TextEditingController();
   final perController = TextEditingController();
   bool show = true;
+  int? userId;
 
   @override
   void dispose() {
@@ -77,6 +78,8 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                 nameController.text = state.userName!;
                 addressController.text = state.address!;
                 perController.text = state.per!;
+                userId = state.userId;
+                passController.text = state.passWord!;
               }
               return _signUpForm(state);
             }
@@ -112,7 +115,8 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
             ],
           ),
           AppTables.customHeadrTable(HeadRowsTypes.usersHeadr.list),
-          AppTables.dynmicTable(state.data!, BodyTableType.userModel, context)
+          AppTables.dynmicTable(
+              state.data ?? [], BodyTableType.userModel, context)
         ],
       ),
     );
@@ -168,18 +172,20 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                           icons: Icons.person),
                       AppTextField.customField(
                           controller: passController,
-                          suffix: IconButton(
-                              onPressed: () {
-                                context
-                                    .read<UserSettingsBloc>()
-                                    .add(ShowHidePassWordEvent(show));
-                              },
-                              icon: Icon(show
-                                  ? Icons.visibility
-                                  : Icons.visibility_off)),
+                          suffix: state.isForEidet == false
+                              ? IconButton(
+                                  onPressed: () {
+                                    context
+                                        .read<UserSettingsBloc>()
+                                        .add(ShowHidePassWordEvent(show));
+                                  },
+                                  icon: Icon(show
+                                      ? Icons.visibility
+                                      : Icons.visibility_off))
+                              : null,
                           labelText: AppLocalizations.of(context)!.lablePass,
                           hintText: AppLocalizations.of(context)!.hintName,
-                          obscureText: show,
+                          obscureText: state.isForEidet == true ? false : show,
                           icons: Icons.password),
                       AppTextField.customField(
                           controller: addressController,
@@ -309,7 +315,8 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
           name: nameController.text,
           pass: passController.text.trim(),
           address: addressController.text,
-          per: perController.text));
+          per: perController.text,
+          id: userId));
     } else {
       context.read<UserSettingsBloc>().add(SginUpUserEvent(
           userName: nameController.text,

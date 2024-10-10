@@ -1,4 +1,4 @@
-enum UserJsonType { sginOrEdite, logIn }
+enum UserJsonType { sgine, logIn, edit, getAllUsers }
 
 class UserModel {
   String? userName;
@@ -16,19 +16,39 @@ class UserModel {
       this.address,
       this.token});
 
-  factory UserModel.fromMap(Map<String, dynamic> map) {
-    return UserModel(
-        userId: map['user_id'],
-        userName: map['user_name'],
-        per: map['per'],
-        address: map['address'],
-        token: map['token']);
+  factory UserModel.fromMap(Map<String, dynamic> map, {UserJsonType? type}) {
+    switch (type) {
+      case UserJsonType.getAllUsers:
+        return UserModel(
+            userId: map['user_id'],
+            passWord: map['pass_word'],
+            userName: map['user_name'],
+            per: map['per'],
+            address: map['address'],
+            token: map['token']);
+
+      default:
+        return UserModel(
+            userId: map['user_id'],
+            userName: map['user_name'],
+            per: map['per'],
+            address: map['address'],
+            token: map['token']);
+    }
   }
 
   Map<String, dynamic> toJson(UserJsonType type) {
     switch (type) {
-      case UserJsonType.sginOrEdite:
+      case UserJsonType.sgine:
         return {
+          "userName": userName,
+          "passWord": passWord,
+          "address": address,
+          "per": per
+        };
+      case UserJsonType.edit:
+        return {
+          "userId": userId,
           "userName": userName,
           "passWord": passWord,
           "address": address,

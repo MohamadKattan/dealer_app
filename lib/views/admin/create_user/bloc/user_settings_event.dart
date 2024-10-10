@@ -8,11 +8,19 @@ class ShowHidePassWordEvent extends UserSettingsEvents {
 }
 
 class ShowFormSignUpEvent extends UserSettingsEvents {
+  int? id;
   String? name;
   String? per;
   String? address;
+  String? passWord;
   bool? isForEidet = false;
-  ShowFormSignUpEvent({this.name, this.address, this.per, this.isForEidet});
+  ShowFormSignUpEvent(
+      {this.name,
+      this.address,
+      this.per,
+      this.id,
+      this.isForEidet,
+      this.passWord});
 }
 
 class SginUpUserEvent extends UserSettingsEvents {
@@ -39,5 +47,11 @@ class EditeUserEvents extends UserSettingsEvents {
   String? pass;
   String address;
   String per;
-  EditeUserEvents({required this.name,required this.address,required this.per,this.pass});
+  int? id;
+  EditeUserEvents(
+      {required this.name,
+      required this.address,
+      required this.per,
+      this.pass,
+      this.id});
 }

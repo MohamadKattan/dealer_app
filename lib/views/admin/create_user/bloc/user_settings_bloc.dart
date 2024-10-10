@@ -68,6 +68,8 @@ class UserSettingsBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
           userName: event.name,
           address: event.address,
           per: event.per,
+          userId: event.id,
+          passWord: event.passWord,
           isForEidet: true));
     } else {
       emit(ShowFormSginUpState(isForEidet: false));
@@ -106,7 +108,7 @@ class UserSettingsBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
           passWord: event.passWord,
           address: event.address,
           per: event.per);
-      final body = user.toJson(UserJsonType.sginOrEdite);
+      final body = user.toJson(UserJsonType.sgine);
       final res = await AppGetter.httpSrv
           .postData(SignUpUserSuburl.createUser.url, body, isAuth: true);
       final data = jsonDecode(res.data);
@@ -147,7 +149,7 @@ class UserSettingsBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
       }
       List resultUsers = data.data['results'];
       for (var usr in resultUsers) {
-        final newUser = UserModel.fromMap(usr);
+        final newUser = UserModel.fromMap(usr, type: UserJsonType.getAllUsers);
         listOfUsers.add(newUser);
       }
       emit(GetAllUsersState(data: listOfUsers));
@@ -195,11 +197,12 @@ class UserSettingsBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
       }
       emit(LoudingState());
       final editeUser = UserModel(
+          userId: event.id,
           userName: event.name,
           passWord: event.pass,
           address: event.address,
           per: event.per);
-      final body = editeUser.toJson(UserJsonType.sginOrEdite);
+      final body = editeUser.toJson(UserJsonType.edit);
       final result = await AppGetter.httpSrv
           .putData(SignUpUserSuburl.editeOneUser.url, body);
       final decode = jsonDecode(result.data);
