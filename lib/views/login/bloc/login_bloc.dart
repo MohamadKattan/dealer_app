@@ -62,9 +62,9 @@ class LoginBloc extends Cubit<int> {
         AppGetter.appLogger.showLogger(LogLevel.warning, '${res.data}');
       } else {
         final map = jsonDecode(res.data) as Map<String, dynamic>;
-        final resLocal = await AppGetter.userController.setUserToLocal(map);
-        if (resLocal.error != null) {
-          AppGetter.appLogger.showLogger(LogLevel.warning, '${resLocal.error}');
+        final saveUserToLocalDB = await AppGetter.userController.setUserToLocal(map);
+        if (saveUserToLocalDB.error != null) {
+          AppGetter.appLogger.showLogger(LogLevel.warning, '${saveUserToLocalDB.error}');
           emit(LoginStateLavel.failLogin.state);
         } else {
           name.clear();

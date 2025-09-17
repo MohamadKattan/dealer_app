@@ -248,6 +248,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
     switch (level) {
       case LevelUserSettingsMsg.errorcreateNewUser:
         newMsg = 'Error while Create New user';
+        context.read<UserSettingsBloc>().add(InitialEvent());
         break;
       case LevelUserSettingsMsg.createdNewUser:
         newMsg = 'New User has been created';

@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dealer/components/app_btn.dart';
+import 'package:dealer/controller/helper_methods_controller.dart';
 import 'package:dealer/router/router_app.gr.dart';
 import 'package:dealer/utilities/ui_res_app/ui_responsev_controller.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +13,18 @@ class ControlScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     StackRouter router = context.router;
+    final isArabic = HelperMethods.isArabic(context);
     return PopScope(
       canPop: false,
       child: SafeArea(
         child: Scaffold(
+          floatingActionButton: AppBtn.floatingBtn(
+              onPressed: () =>
+                  HelperMethods.pushMethod(context, const HomeRoute(), true),
+              icon: isArabic ? Icons.arrow_back_ios : Icons.arrow_forward_ios),
+          floatingActionButtonLocation: isArabic
+              ? FloatingActionButtonLocation.endFloat
+              : FloatingActionButtonLocation.startFloat,
           body: Container(
             margin: const EdgeInsets.all(35.0),
             child: CustomScrollView(

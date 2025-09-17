@@ -1,4 +1,4 @@
-enum UserJsonType { sgine, logIn, edit, getAllUsers }
+enum UserJsonType { sgine, logIn, edit, getUsers }
 
 class UserModel {
   String? userName;
@@ -18,9 +18,9 @@ class UserModel {
 
   factory UserModel.fromMap(Map<String, dynamic> map, {UserJsonType? type}) {
     switch (type) {
-      case UserJsonType.getAllUsers:
+      case UserJsonType.getUsers:
         return UserModel(
-            userId: map['user_id'],
+            userId: map['id'],
             passWord: map['pass_word'],
             userName: map['user_name'],
             per: map['per'],

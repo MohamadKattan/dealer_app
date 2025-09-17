@@ -29,7 +29,7 @@ class ThemeBloc extends Cubit<ThemeData> {
       }
 
       if (res.data == null || res.data.runtimeType != String) {
-        AppGetter.appLogger.showLogger(LogLevel.warning, 'Defult them');
+        AppGetter.appLogger.showLogger(LogLevel.info, 'Defult them');
         return;
       }
       String result = res.data;

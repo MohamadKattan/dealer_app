@@ -66,6 +66,7 @@ class AppHttpsSrv {
       {bool isAuth = false}) async {
     try {
       dio.options.baseUrl = baseUrl;
+      
       if (isAuth) {
         dio.options.headers = {
           'Content-Type': 'application/json',

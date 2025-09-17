@@ -136,21 +136,24 @@ class UserSettingsBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
     List<UserModel>? listOfUsers = [];
     try {
       emit(LoudingState());
-      final result = await AppGetter.httpSrv
+
+      ResultController res = await AppGetter.httpSrv
           .getData(SignUpUserSuburl.getAllUsers.url, isAuth: true);
-      final dataDecode = jsonDecode(result.data);
-      final data = ResultController.fromMap(dataDecode);
-      if (result.status == ResultsLevel.fail) {
+
+      final decodeRes = jsonDecode(res.data);
+      ResultController newObj = ResultController.fromMap(decodeRes);
+
+      if (res.status == ResultsLevel.fail) {
         AppGetter.appLogger
-            .showLogger(LogLevel.error, data.msg ?? 'error to get all users**');
+            .showLogger(LogLevel.error, newObj.msg ?? 'error to get all users');
         emit(MessagesState(
-            msgInfo: data.msg, level: LevelUserSettingsMsg.getAllUsers));
+            msgInfo: newObj.msg, level: LevelUserSettingsMsg.getAllUsers));
         return;
       }
-      List resultUsers = data.data['results'];
-      for (var usr in resultUsers) {
-        final newUser = UserModel.fromMap(usr, type: UserJsonType.getAllUsers);
-        listOfUsers.add(newUser);
+      // List resultUsers = newObj.data;
+      for (var usr in newObj.data) {
+        UserModel user = UserModel.fromMap(usr, type: UserJsonType.getUsers);
+        listOfUsers.add(user);
       }
       emit(GetAllUsersState(data: listOfUsers));
     } catch (e) {
@@ -195,26 +198,29 @@ class UserSettingsBloc extends Bloc<UserSettingsEvents, UserSettingsStates> {
           return;
         }
       }
+
       emit(LoudingState());
+
       final editeUser = UserModel(
           userId: event.id,
           userName: event.name,
           passWord: event.pass,
           address: event.address,
           per: event.per);
+
       final body = editeUser.toJson(UserJsonType.edit);
-      final result = await AppGetter.httpSrv
-          .putData(SignUpUserSuburl.editeOneUser.url, body);
-      final decode = jsonDecode(result.data);
+      ResultController res = await AppGetter.httpSrv
+          .putData(SignUpUserSuburl.editeOneUser.url, body, isAuth: true);
+      final decode = jsonDecode(res.data);
       final data = ResultController.fromMap(decode);
-      if (result.status == ResultsLevel.fail) {
+      if (res.status == ResultsLevel.fail) {
         AppGetter.appLogger.showLogger(LogLevel.error, data.msg ?? 'error');
         emit(MessagesState(
             msgInfo: data.msg, level: LevelUserSettingsMsg.errorEditeUser));
         return;
       }
       emit(MessagesState(
-          msgInfo: data.msg, level: LevelUserSettingsMsg.editedUser));
+          msgInfo: data.msg, title: '',level: LevelUserSettingsMsg.editedUser));
     } catch (e) {
       AppGetter.appLogger.showLogger(LogLevel.error, e.toString());
       emit(MessagesState(
