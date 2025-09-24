@@ -33,7 +33,8 @@ class AppHttpsSrv {
       return ResultController(
           data: response.data, status: ResultsLevel.success);
     } catch (e) {
-      return ResultController(error: e.toString(), status: ResultsLevel.fail);
+      return ResultController(
+          data: null, error: e.toString(), status: ResultsLevel.fail);
     }
   }
 
@@ -58,7 +59,7 @@ class AppHttpsSrv {
           data: response.data, status: ResultsLevel.success);
     } catch (e) {
       return ResultController(
-          data: e.toString(), status: ResultsLevel.fail, error: 'error');
+          data: e.toString(), status: ResultsLevel.fail, error: e.toString());
     }
   }
 
@@ -66,7 +67,7 @@ class AppHttpsSrv {
       {bool isAuth = false}) async {
     try {
       dio.options.baseUrl = baseUrl;
-      
+
       if (isAuth) {
         dio.options.headers = {
           'Content-Type': 'application/json',
@@ -81,7 +82,8 @@ class AppHttpsSrv {
       return ResultController(
           data: response.data, status: ResultsLevel.success);
     } catch (e) {
-      return ResultController(error: e.toString(), status: ResultsLevel.fail);
+      return ResultController(
+          data: null, error: e.toString(), status: ResultsLevel.fail);
     }
   }
 
@@ -89,12 +91,12 @@ class AppHttpsSrv {
       {bool isAuth = false}) async {
     try {
       dio.options.baseUrl = baseUrl;
-      // if (isAuth) {
-      //   dio.options.headers = {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': AppGetter.usertoken ?? ''
-      //   };
-      // }
+      if (isAuth) {
+        dio.options.headers = {
+          'Content-Type': 'application/json',
+          'Authorization': AppGetter.usertoken ?? ''
+        };
+      }
       Response response = await dio.delete(url, data: data);
       if (response.statusCode != null &&
           (response.statusCode! < 200 || response.statusCode! >= 300)) {
@@ -104,7 +106,8 @@ class AppHttpsSrv {
       return ResultController(
           data: response.data, status: ResultsLevel.success);
     } catch (e) {
-      return ResultController(error: e.toString(), status: ResultsLevel.fail);
+      return ResultController(
+          data: null, error: e.toString(), status: ResultsLevel.fail);
     }
   }
 }

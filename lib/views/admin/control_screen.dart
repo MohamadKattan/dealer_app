@@ -59,6 +59,8 @@ class ControlScreen extends StatelessWidget {
                             txt: AppLocalizations.of(context)!
                                 .retailSalesCenters),
                         AppBtn.cardBtn(
+                            function: () =>
+                                router.replace(const WarehousesRoute()),
                             icon: Icons.storage_rounded,
                             sizeIcon: 40,
                             txt: AppLocalizations.of(context)!

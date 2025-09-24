@@ -54,7 +54,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
               context.read<UserSettingsBloc>().add(GetAllUsersEvent());
             }
             if (state is LoudingState) {
-              return _louding();
+              return AppIndicators.louding(context);
             }
 
             if (state is MessagesState) {
@@ -87,7 +87,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
             if (state is GetAllUsersState) {
               return _body(state);
             }
-            return _louding();
+            return AppIndicators.louding(context);
           },
         ),
       ),
@@ -114,7 +114,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
               ),
             ],
           ),
-          AppTables.customHeadrTable(HeadRowsTypes.usersHeadr.list),
+          AppTables.customHeadrTable(HeadRowsTypes.users.list),
           AppTables.dynmicTable(
               state.data ?? [], BodyTableType.userModel, context)
         ],
@@ -222,22 +222,6 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _louding() {
-    return Container(
-      height: UiResponsive.globalMedia(context: context, isHeight: true),
-      width: UiResponsive.globalMedia(context: context),
-      color: const Color.fromARGB(66, 44, 41, 41),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AppIndicators.loadingCircularIndicator,
-          AppText.normalText('Please wait...')
-        ],
       ),
     );
   }

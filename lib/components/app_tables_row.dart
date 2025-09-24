@@ -5,17 +5,21 @@ import 'package:dealer/controller/helper_methods_controller.dart';
 import 'package:dealer/models/user_model.dart';
 import 'package:dealer/views/admin/create_user/bloc/user_settings_bloc.dart';
 import 'package:dealer/views/admin/create_user/bloc/user_settings_event.dart';
+import 'package:dealer/views/admin/warehouses/bloc/warehouses_bloc.dart';
+import 'package:dealer/views/admin/warehouses/bloc/warehouses_event.dart';
+import 'package:dealer/views/admin/warehouses/model/warehouse_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 enum HeadRowsTypes {
-  usersHeadr(["Number", "Name", "Type", "Address", "Delete", "Edite"]);
+  users(["Number", "Name", "Type", "Address", "Delete", "Edite"]),
+  wareHouse(["Name", "des", "Delete", "Edite"]);
 
   final List<String> list;
   const HeadRowsTypes(this.list);
 }
 
-enum BodyTableType { userModel }
+enum BodyTableType { userModel, warehouses }
 
 class AppTables {
   static Widget customHeadrTable(List list) {
@@ -103,6 +107,50 @@ class AppTables {
             ),
           ],
         );
+      case BodyTableType.warehouses:
+        List<WarehouseModel> warehouse = List<WarehouseModel>.from(list);
+        Color rowColor = i % 2 == 0 ? Colors.grey[300]! : Colors.white;
+        return TableRow(
+          decoration: BoxDecoration(color: rowColor),
+          children: [
+            // TableCell(child: AppText.normalText('${warehouse[i].id!}')),
+            TableCell(child: AppText.normalText(warehouse[i].name!)),
+            TableCell(child: AppText.normalText(warehouse[i].des!)),
+            AppBtn.iconBtn(
+              icon: Icons.delete,
+              onPressed: () {
+                AppDialog.dialogBuilder(
+                  context: context,
+                  secondBtn: true,
+                  bgColor: const Color.fromARGB(255, 247, 118, 118),
+                  title: 'Warning!!',
+                  content:
+                      'By click on delete btn\nYou are going to delete\nAll data and refrenc for\n The warehouse :***${warehouse[i].name!}***',
+                  txtPop: 'Cancel',
+                  txtSecond: 'Delete',
+                  onPressedSecond: () {
+                    context
+                        .read<WarehousesBloc>()
+                        .add(DeleteWarehousEvent(warehouse[i].id!));
+                    HelperMethods.popMethod(context);
+                  },
+                  onPressedPop: () => HelperMethods.popMethod(context),
+                );
+              },
+            ),
+            AppBtn.iconBtn(
+              icon: Icons.edit,
+              onPressed: () {
+                context.read<WarehousesBloc>().add((ShowFormSubmitEvent(
+                    isEdite: true,
+                    id: warehouse[i].id,
+                    oldName: warehouse[i].name,
+                    oldDes: warehouse[i].des)));
+              },
+            ),
+          ],
+        );
+
       default:
         return const TableRow();
     }
